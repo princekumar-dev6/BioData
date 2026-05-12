@@ -7,17 +7,14 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
-import Cropper from 'react-easy-crop';
 import {
   Download, Eye, Edit3, User, GraduationCap, Users, Heart, Phone,
-  Camera, Trash2, RotateCcw, FileText, Printer, Share2,
-  Sparkles, Save, CheckCircle2
+  Camera, Trash2, RotateCcw, FileText, Printer, Share2, ImagePlus,
+  Sparkles, Save, Plus, X
 } from 'lucide-react';
 
 // ============================================================
@@ -56,7 +53,6 @@ const DEFAULT_FORM_DATA = {
   college: '',
   occupation: '',
   company: '',
-  income: '',
   workLocation: '',
   fatherName: '',
   fatherOccupation: '',
@@ -66,60 +62,47 @@ const DEFAULT_FORM_DATA = {
   sisters: '',
   familyType: '',
   aboutMe: '',
-  hobbies: '',
-  partnerAge: '',
-  partnerHeight: '',
-  partnerEducation: '',
-  partnerOccupation: '',
-  partnerPreferences: '',
   contactNumber: '',
   email: '',
   address: '',
-  photo: '',
+  photos: [],
 };
 
 // ============================================================
-// HELPER FUNCTIONS
+// HELPER: Resize image maintaining quality
 // ============================================================
 
-const createImage = (url) =>
-  new Promise((resolve, reject) => {
-    const image = new Image();
-    image.addEventListener('load', () => resolve(image));
-    image.addEventListener('error', (error) => reject(error));
-    image.setAttribute('crossOrigin', 'anonymous');
-    image.src = url;
+const resizeImage = (file, maxDim = 1200) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = (height / width) * maxDim;
+            width = maxDim;
+          } else {
+            width = (width / height) * maxDim;
+            height = maxDim;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.92));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
   });
-
-const getCroppedImg = async (imageSrc, pixelCrop) => {
-  const image = await createImage(imageSrc);
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-
-  const maxSize = 400;
-  const scaleX = image.naturalWidth / image.width;
-  const scaleY = image.naturalHeight / image.height;
-
-  canvas.width = maxSize;
-  canvas.height = maxSize * (4 / 3);
-
-  ctx.drawImage(
-    image,
-    pixelCrop.x * scaleX,
-    pixelCrop.y * scaleY,
-    pixelCrop.width * scaleX,
-    pixelCrop.height * scaleY,
-    0,
-    0,
-    canvas.width,
-    canvas.height
-  );
-
-  return canvas.toDataURL('image/jpeg', 0.85);
 };
 
 // ============================================================
-// FORM COMPONENTS (defined OUTSIDE Home to prevent re-mount)
+// FORM COMPONENTS (outside Home to prevent re-mount on state change)
 // ============================================================
 
 const FormField = ({ label, field, placeholder, type = 'text', value, onChange, ...props }) => (
@@ -168,27 +151,27 @@ const FormTextareaField = ({ label, field, placeholder, rows = 3, value, onChang
 );
 
 // ============================================================
-// TEMPLATE COMPONENTS (NO gradients - solid colors for PDF)
+// TEMPLATE COMPONENTS
 // ============================================================
 
 const OrnamentalDivider = () => (
-  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '8px 0' }}>
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '6px 0' }}>
     <div style={{ flex: 1, height: '1px', backgroundColor: '#D4AF37' }} />
-    <div style={{ margin: '0 12px', color: '#D4AF37', fontSize: '12px' }}>&#10022;</div>
+    <div style={{ margin: '0 10px', color: '#D4AF37', fontSize: '10px' }}>&#10022;</div>
     <div style={{ flex: 1, height: '1px', backgroundColor: '#D4AF37' }} />
   </div>
 );
 
 const SectionTitle = ({ title }) => (
-  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '20px 0 12px' }}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '10px 0 6px' }}>
     <div style={{ flex: 1, height: '1px', backgroundColor: '#D4AF37' }} />
     <span style={{
-      fontSize: '11px',
+      fontSize: '9px',
       fontWeight: 700,
-      letterSpacing: '0.2em',
+      letterSpacing: '0.18em',
       textTransform: 'uppercase',
       color: '#8B1A1A',
-      whiteSpace: 'nowrap'
+      whiteSpace: 'nowrap',
     }}>{title}</span>
     <div style={{ flex: 1, height: '1px', backgroundColor: '#D4AF37' }} />
   </div>
@@ -199,306 +182,209 @@ const DetailRow = ({ label, value }) => {
   return (
     <tr>
       <td style={{
-        padding: '5px 0',
-        fontSize: '13px',
+        padding: '2px 0',
+        fontSize: '11px',
         fontWeight: 500,
         color: '#6B5B3E',
         whiteSpace: 'nowrap',
         verticalAlign: 'top',
-        width: '160px'
       }}>{label}</td>
       <td style={{
-        padding: '5px 8px',
-        fontSize: '13px',
+        padding: '2px 6px',
+        fontSize: '11px',
         color: '#D4AF37',
         verticalAlign: 'top',
-        width: '12px'
+        width: '10px',
       }}>:</td>
       <td style={{
-        padding: '5px 0',
-        fontSize: '13px',
+        padding: '2px 0',
+        fontSize: '11px',
         fontWeight: 600,
         color: '#2D2418',
         verticalAlign: 'top',
-        wordBreak: 'break-word'
+        wordBreak: 'break-word',
       }}>{value}</td>
     </tr>
   );
 };
 
 // ============================================================
-// BIODATA TEMPLATE (all inline styles, no gradients)
+// PAGE 1: INFORMATION TEMPLATE
 // ============================================================
 
-const BiodataTemplate = ({ formData }) => {
+const BiodataPage1 = ({ formData }) => {
   const hasPersonalDetails = formData.height || formData.weight || formData.complexion ||
     formData.bloodGroup || formData.religion || formData.caste ||
     formData.motherTongue || formData.gotra || formData.subCaste || formData.dateOfBirth || formData.age;
 
   const hasCareerDetails = formData.education || formData.college || formData.occupation ||
-    formData.company || formData.income || formData.workLocation;
+    formData.company || formData.workLocation;
 
   const hasFamilyDetails = formData.fatherName || formData.motherName ||
     formData.brothers || formData.sisters || formData.familyType;
-
-  const hasPartnerPrefs = formData.partnerAge || formData.partnerHeight ||
-    formData.partnerEducation || formData.partnerOccupation || formData.partnerPreferences;
 
   const hasContact = formData.contactNumber || formData.email || formData.address;
 
   return (
     <div
-      id="biodata-preview"
+      id="biodata-page1"
       style={{
         width: '595px',
-        minHeight: '842px',
+        height: '842px',
         backgroundColor: '#FFFEF7',
         fontFamily: 'Georgia, "Times New Roman", serif',
-        padding: '12px',
-        margin: '0 auto',
+        padding: '10px',
+        boxSizing: 'border-box',
+        overflow: 'hidden',
       }}
     >
-      {/* Outer decorative border */}
-      <div
-        style={{
-          border: '2px solid #D4AF37',
-          padding: '4px',
-          minHeight: '818px',
-          position: 'relative',
-        }}
-      >
-        {/* Inner border */}
-        <div
-          style={{
-            border: '1px solid #D4AF37',
-            padding: '24px 28px',
-            minHeight: '806px',
-          }}
-        >
+      <div style={{
+        border: '2px solid #D4AF37',
+        padding: '3px',
+        height: '100%',
+        boxSizing: 'border-box',
+        position: 'relative',
+      }}>
+        <div style={{
+          border: '1px solid #D4AF37',
+          padding: '16px 20px',
+          height: '100%',
+          boxSizing: 'border-box',
+          display: 'flex',
+          flexDirection: 'column',
+        }}>
           {/* Corner decorations */}
-          <div style={{ position: 'absolute', top: '8px', left: '8px', width: '20px', height: '20px', borderTop: '2px solid #8B1A1A', borderLeft: '2px solid #8B1A1A' }} />
-          <div style={{ position: 'absolute', top: '8px', right: '8px', width: '20px', height: '20px', borderTop: '2px solid #8B1A1A', borderRight: '2px solid #8B1A1A' }} />
-          <div style={{ position: 'absolute', bottom: '8px', left: '8px', width: '20px', height: '20px', borderBottom: '2px solid #8B1A1A', borderLeft: '2px solid #8B1A1A' }} />
-          <div style={{ position: 'absolute', bottom: '8px', right: '8px', width: '20px', height: '20px', borderBottom: '2px solid #8B1A1A', borderRight: '2px solid #8B1A1A' }} />
+          <div style={{ position: 'absolute', top: '6px', left: '6px', width: '16px', height: '16px', borderTop: '2px solid #8B1A1A', borderLeft: '2px solid #8B1A1A' }} />
+          <div style={{ position: 'absolute', top: '6px', right: '6px', width: '16px', height: '16px', borderTop: '2px solid #8B1A1A', borderRight: '2px solid #8B1A1A' }} />
+          <div style={{ position: 'absolute', bottom: '6px', left: '6px', width: '16px', height: '16px', borderBottom: '2px solid #8B1A1A', borderLeft: '2px solid #8B1A1A' }} />
+          <div style={{ position: 'absolute', bottom: '6px', right: '6px', width: '16px', height: '16px', borderBottom: '2px solid #8B1A1A', borderRight: '2px solid #8B1A1A' }} />
 
           {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-            <p style={{ fontSize: '13px', marginBottom: '4px', color: '#D4AF37', fontFamily: 'Georgia, serif' }}>
+          <div style={{ textAlign: 'center', marginBottom: '4px' }}>
+            <p style={{ fontSize: '12px', marginBottom: '2px', color: '#D4AF37', fontFamily: 'Georgia, serif' }}>
               || &#2358;&#2381;&#2352;&#2368; &#2327;&#2339;&#2375;&#2358;&#2366;&#2351; &#2344;&#2350;&#2307; ||
             </p>
             <OrnamentalDivider />
             <h1 style={{
-              fontSize: '28px',
+              fontSize: '22px',
               fontWeight: 700,
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              margin: '12px 0',
+              letterSpacing: '0.08em',
+              margin: '6px 0 4px',
               color: '#8B1A1A',
               fontFamily: 'var(--font-playfair), Georgia, serif',
             }}>
-              Biodata
+              {formData.fullName || 'Your Full Name'}
             </h1>
             <OrnamentalDivider />
           </div>
 
-          {/* Photo + Name Section */}
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '24px', marginBottom: '20px' }}>
-            {/* Photo */}
-            <div style={{ flexShrink: 0 }}>
-              <div style={{
-                width: '140px',
-                height: '175px',
-                border: '3px solid #D4AF37',
-                padding: '3px',
-                backgroundColor: '#FFF',
-              }}>
-                <div style={{
-                  width: '100%',
-                  height: '100%',
-                  border: '1px solid #E8D48B',
-                  overflow: 'hidden',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: formData.photo ? 'transparent' : '#FBF5E6',
-                }}>
-                  {formData.photo ? (
-                    <img
-                      src={formData.photo}
-                      alt="Profile"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                    />
-                  ) : (
-                    <div style={{ textAlign: 'center' }}>
-                      <Camera size={28} style={{ color: '#D4AF37', margin: '0 auto 4px' }} />
-                      <p style={{ fontSize: '10px', color: '#B8960C' }}>Your Photo</p>
-                    </div>
+          {/* Content area - flex grow */}
+          <div style={{ flex: 1 }}>
+            {/* About Me - Full Width */}
+            {formData.aboutMe && (
+              <>
+                <SectionTitle title="About Me" />
+                <p style={{ fontSize: '11px', lineHeight: 1.6, color: '#2D2418', margin: '0 0 4px' }}>
+                  {formData.aboutMe}
+                </p>
+              </>
+            )}
+
+            {/* Two Column: Personal Details + Education & Career */}
+            {(hasPersonalDetails || hasCareerDetails) && (
+              <div style={{ display: 'flex', gap: '16px' }}>
+                {/* Left: Personal Details */}
+                <div style={{ flex: 1 }}>
+                  {hasPersonalDetails && (
+                    <>
+                      <SectionTitle title="Personal Details" />
+                      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <tbody>
+                          <DetailRow label="Date of Birth" value={formData.dateOfBirth} />
+                          <DetailRow label="Age" value={formData.age ? `${formData.age} years` : ''} />
+                          <DetailRow label="Gender" value={formData.gender} />
+                          <DetailRow label="Height" value={formData.height} />
+                          <DetailRow label="Weight" value={formData.weight ? `${formData.weight} kg` : ''} />
+                          <DetailRow label="Complexion" value={formData.complexion} />
+                          <DetailRow label="Blood Group" value={formData.bloodGroup} />
+                          <DetailRow label="Marital Status" value={formData.maritalStatus} />
+                          <DetailRow label="Religion" value={formData.religion} />
+                          <DetailRow label="Caste" value={formData.caste} />
+                          <DetailRow label="Sub-Caste" value={formData.subCaste} />
+                          <DetailRow label="Gotra" value={formData.gotra} />
+                          <DetailRow label="Mother Tongue" value={formData.motherTongue} />
+                        </tbody>
+                      </table>
+                    </>
+                  )}
+                </div>
+
+                {/* Right: Education & Career */}
+                <div style={{ flex: 1 }}>
+                  {hasCareerDetails && (
+                    <>
+                      <SectionTitle title="Education & Career" />
+                      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <tbody>
+                          <DetailRow label="Education" value={formData.education} />
+                          <DetailRow label="College" value={formData.college} />
+                          <DetailRow label="Occupation" value={formData.occupation} />
+                          <DetailRow label="Company" value={formData.company} />
+                          <DetailRow label="Work Location" value={formData.workLocation} />
+                        </tbody>
+                      </table>
+                    </>
                   )}
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* Name & Quick Info */}
-            <div style={{ flex: 1, paddingTop: '8px' }}>
-              <h2 style={{
-                fontSize: '22px',
-                fontWeight: 700,
-                marginBottom: '8px',
-                color: '#8B1A1A',
-                fontFamily: 'var(--font-playfair), Georgia, serif',
-              }}>
-                {formData.fullName || 'Your Full Name'}
-              </h2>
-              <div style={{ fontSize: '13px', color: '#4A3F2F', lineHeight: 1.8 }}>
-                {formData.dateOfBirth && (
-                  <p><span style={{ color: '#6B5B3E' }}>Date of Birth:</span> {formData.dateOfBirth}{formData.age ? ` (${formData.age} yrs)` : ''}</p>
-                )}
-                {!formData.dateOfBirth && formData.age && (
-                  <p><span style={{ color: '#6B5B3E' }}>Age:</span> {formData.age} years</p>
-                )}
-                {formData.religion && (
-                  <p><span style={{ color: '#6B5B3E' }}>Religion:</span> {formData.religion}{formData.caste ? ` - ${formData.caste}` : ''}</p>
-                )}
-                {formData.education && (
-                  <p><span style={{ color: '#6B5B3E' }}>Education:</span> {formData.education}</p>
-                )}
-                {formData.occupation && (
-                  <p><span style={{ color: '#6B5B3E' }}>Occupation:</span> {formData.occupation}</p>
-                )}
+            {/* Two Column: Family Details + Contact */}
+            {(hasFamilyDetails || hasContact) && (
+              <div style={{ display: 'flex', gap: '16px' }}>
+                {/* Left: Family Details */}
+                <div style={{ flex: 1 }}>
+                  {hasFamilyDetails && (
+                    <>
+                      <SectionTitle title="Family Details" />
+                      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <tbody>
+                          <DetailRow label="Father's Name" value={formData.fatherName} />
+                          <DetailRow label="Father's Occ." value={formData.fatherOccupation} />
+                          <DetailRow label="Mother's Name" value={formData.motherName} />
+                          <DetailRow label="Mother's Occ." value={formData.motherOccupation} />
+                          <DetailRow label="Brothers" value={formData.brothers} />
+                          <DetailRow label="Sisters" value={formData.sisters} />
+                          <DetailRow label="Family Type" value={formData.familyType} />
+                        </tbody>
+                      </table>
+                    </>
+                  )}
+                </div>
+
+                {/* Right: Contact */}
+                <div style={{ flex: 1 }}>
+                  {hasContact && (
+                    <>
+                      <SectionTitle title="Contact Information" />
+                      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <tbody>
+                          <DetailRow label="Contact No." value={formData.contactNumber} />
+                          <DetailRow label="Email" value={formData.email} />
+                          <DetailRow label="Address" value={formData.address} />
+                        </tbody>
+                      </table>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
-          {/* Personal Details */}
-          {hasPersonalDetails && (
-            <>
-              <SectionTitle title="Personal Details" />
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <tbody>
-                  <DetailRow label="Date of Birth" value={formData.dateOfBirth} />
-                  <DetailRow label="Age" value={formData.age ? `${formData.age} years` : ''} />
-                  <DetailRow label="Height" value={formData.height} />
-                  <DetailRow label="Weight" value={formData.weight ? `${formData.weight} kg` : ''} />
-                  <DetailRow label="Complexion" value={formData.complexion} />
-                  <DetailRow label="Blood Group" value={formData.bloodGroup} />
-                  <DetailRow label="Marital Status" value={formData.maritalStatus} />
-                  <DetailRow label="Religion" value={formData.religion} />
-                  <DetailRow label="Caste" value={formData.caste} />
-                  <DetailRow label="Sub-Caste" value={formData.subCaste} />
-                  <DetailRow label="Gotra" value={formData.gotra} />
-                  <DetailRow label="Mother Tongue" value={formData.motherTongue} />
-                </tbody>
-              </table>
-            </>
-          )}
-
-          {/* Education & Career */}
-          {hasCareerDetails && (
-            <>
-              <SectionTitle title="Education & Career" />
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <tbody>
-                  <DetailRow label="Education" value={formData.education} />
-                  <DetailRow label="College / University" value={formData.college} />
-                  <DetailRow label="Occupation" value={formData.occupation} />
-                  <DetailRow label="Company" value={formData.company} />
-                  <DetailRow label="Annual Income" value={formData.income} />
-                  <DetailRow label="Work Location" value={formData.workLocation} />
-                </tbody>
-              </table>
-            </>
-          )}
-
-          {/* Family Details */}
-          {hasFamilyDetails && (
-            <>
-              <SectionTitle title="Family Details" />
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <tbody>
-                  <DetailRow label="Father's Name" value={formData.fatherName} />
-                  <DetailRow label="Father's Occupation" value={formData.fatherOccupation} />
-                  <DetailRow label="Mother's Name" value={formData.motherName} />
-                  <DetailRow label="Mother's Occupation" value={formData.motherOccupation} />
-                  <DetailRow label="Brothers" value={formData.brothers} />
-                  <DetailRow label="Sisters" value={formData.sisters} />
-                  <DetailRow label="Family Type" value={formData.familyType} />
-                </tbody>
-              </table>
-            </>
-          )}
-
-          {/* About Me */}
-          {formData.aboutMe && (
-            <>
-              <SectionTitle title="About Me" />
-              <p style={{ fontSize: '13px', lineHeight: 1.7, color: '#2D2418' }}>
-                {formData.aboutMe}
-              </p>
-            </>
-          )}
-
-          {/* Hobbies */}
-          {formData.hobbies && (
-            <>
-              <SectionTitle title="Hobbies & Interests" />
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                {formData.hobbies.split(',').map((hobby, i) => (
-                  <span
-                    key={i}
-                    style={{
-                      fontSize: '12px',
-                      padding: '4px 14px',
-                      borderRadius: '20px',
-                      backgroundColor: '#FBF5E6',
-                      color: '#6B5B3E',
-                      border: '1px solid #E8D48B',
-                    }}
-                  >
-                    {hobby.trim()}
-                  </span>
-                ))}
-              </div>
-            </>
-          )}
-
-          {/* Partner Preferences */}
-          {hasPartnerPrefs && (
-            <>
-              <SectionTitle title="Partner Preferences" />
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <tbody>
-                  <DetailRow label="Preferred Age" value={formData.partnerAge} />
-                  <DetailRow label="Preferred Height" value={formData.partnerHeight} />
-                  <DetailRow label="Preferred Education" value={formData.partnerEducation} />
-                  <DetailRow label="Preferred Occupation" value={formData.partnerOccupation} />
-                </tbody>
-              </table>
-              {formData.partnerPreferences && (
-                <p style={{ fontSize: '13px', lineHeight: 1.7, color: '#2D2418', marginTop: '8px' }}>
-                  {formData.partnerPreferences}
-                </p>
-              )}
-            </>
-          )}
-
-          {/* Contact Information */}
-          {hasContact && (
-            <>
-              <SectionTitle title="Contact Information" />
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <tbody>
-                  <DetailRow label="Contact No." value={formData.contactNumber} />
-                  <DetailRow label="Email" value={formData.email} />
-                  <DetailRow label="Address" value={formData.address} />
-                </tbody>
-              </table>
-            </>
-          )}
-
           {/* Footer */}
-          <div style={{ marginTop: '24px' }}>
+          <div style={{ marginTop: 'auto', paddingTop: '8px' }}>
             <OrnamentalDivider />
-            <p style={{ textAlign: 'center', fontSize: '12px', marginTop: '8px', color: '#D4AF37' }}>
+            <p style={{ textAlign: 'center', fontSize: '10px', marginTop: '4px', color: '#D4AF37' }}>
               &#10022; &#10022; &#10022;
             </p>
           </div>
@@ -509,66 +395,116 @@ const BiodataTemplate = ({ formData }) => {
 };
 
 // ============================================================
-// IMAGE CROP MODAL
+// PAGE 2: PHOTO GALLERY TEMPLATE
 // ============================================================
 
-const ImageCropModal = ({ imageSrc, open, onClose, onComplete }) => {
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-
-  const onCropComplete = useCallback((croppedArea, croppedAreaPx) => {
-    setCroppedAreaPixels(croppedAreaPx);
-  }, []);
-
-  const handleSave = async () => {
-    try {
-      const croppedImage = await getCroppedImg(imageSrc, croppedAreaPixels);
-      onComplete(croppedImage);
-    } catch (e) {
-      console.error('Crop failed:', e);
-      toast.error('Failed to crop image');
-    }
-  };
-
-  if (!imageSrc) return null;
+const BiodataPage2 = ({ formData }) => {
+  const photos = formData.photos || [];
+  if (photos.length === 0) return null;
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden">
-        <DialogHeader className="px-6 pt-6 pb-2">
-          <DialogTitle className="font-playfair text-maroon">Crop Your Photo</DialogTitle>
-        </DialogHeader>
-        <div className="relative h-[350px] bg-black">
-          <Cropper
-            image={imageSrc}
-            crop={crop}
-            zoom={zoom}
-            aspect={3 / 4}
-            onCropChange={setCrop}
-            onZoomChange={setZoom}
-            onCropComplete={onCropComplete}
-          />
+    <div
+      id="biodata-page2"
+      style={{
+        width: '595px',
+        height: '842px',
+        backgroundColor: '#FFFEF7',
+        fontFamily: 'Georgia, "Times New Roman", serif',
+        padding: '10px',
+        boxSizing: 'border-box',
+        overflow: 'hidden',
+      }}
+    >
+      <div style={{
+        border: '2px solid #D4AF37',
+        padding: '3px',
+        height: '100%',
+        boxSizing: 'border-box',
+        position: 'relative',
+      }}>
+        <div style={{
+          border: '1px solid #D4AF37',
+          padding: '16px 20px',
+          height: '100%',
+          boxSizing: 'border-box',
+          display: 'flex',
+          flexDirection: 'column',
+        }}>
+          {/* Corner decorations */}
+          <div style={{ position: 'absolute', top: '6px', left: '6px', width: '16px', height: '16px', borderTop: '2px solid #8B1A1A', borderLeft: '2px solid #8B1A1A' }} />
+          <div style={{ position: 'absolute', top: '6px', right: '6px', width: '16px', height: '16px', borderTop: '2px solid #8B1A1A', borderRight: '2px solid #8B1A1A' }} />
+          <div style={{ position: 'absolute', bottom: '6px', left: '6px', width: '16px', height: '16px', borderBottom: '2px solid #8B1A1A', borderLeft: '2px solid #8B1A1A' }} />
+          <div style={{ position: 'absolute', bottom: '6px', right: '6px', width: '16px', height: '16px', borderBottom: '2px solid #8B1A1A', borderRight: '2px solid #8B1A1A' }} />
+
+          {/* Header */}
+          <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+            <p style={{ fontSize: '12px', marginBottom: '2px', color: '#D4AF37', fontFamily: 'Georgia, serif' }}>
+              || &#2358;&#2381;&#2352;&#2368; &#2327;&#2339;&#2375;&#2358;&#2366;&#2351; &#2344;&#2350;&#2307; ||
+            </p>
+            <OrnamentalDivider />
+            <h1 style={{
+              fontSize: '22px',
+              fontWeight: 700,
+              letterSpacing: '0.08em',
+              margin: '6px 0 4px',
+              color: '#8B1A1A',
+              fontFamily: 'var(--font-playfair), Georgia, serif',
+            }}>
+              {formData.fullName || 'Your Full Name'}
+            </h1>
+            <OrnamentalDivider />
+          </div>
+
+          {/* Photo Grid */}
+          <div style={{
+            flex: 1,
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '12px',
+            justifyContent: 'center',
+            alignContent: 'center',
+            padding: '8px',
+          }}>
+            {photos.map((photo, i) => (
+              <div key={i} style={{
+                width: photos.length === 1 ? '380px' : '250px',
+                height: photos.length === 1 ? '480px' : photos.length <= 2 ? '420px' : '320px',
+                border: '3px solid #D4AF37',
+                padding: '3px',
+                backgroundColor: '#FFF',
+                flexShrink: 0,
+              }}>
+                <div style={{
+                  width: '100%',
+                  height: '100%',
+                  border: '1px solid #E8D48B',
+                  overflow: 'hidden',
+                }}>
+                  <img
+                    src={photo}
+                    alt={`Photo ${i + 1}`}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      display: 'block',
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Footer */}
+          <div style={{ marginTop: 'auto', paddingTop: '8px' }}>
+            <OrnamentalDivider />
+            <p style={{ textAlign: 'center', fontSize: '10px', marginTop: '4px', color: '#D4AF37' }}>
+              &#10022; &#10022; &#10022;
+            </p>
+          </div>
         </div>
-        <div className="px-6 py-2">
-          <Label className="text-sm text-muted-foreground mb-1 block">Zoom</Label>
-          <Slider
-            value={[zoom]}
-            min={1}
-            max={3}
-            step={0.1}
-            onValueChange={(v) => setZoom(v[0])}
-            className="my-2"
-          />
-        </div>
-        <div className="flex justify-end gap-3 px-6 pb-6">
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={handleSave} className="bg-maroon hover:bg-maroon-dark text-white">
-            <CheckCircle2 size={16} className="mr-2" /> Apply Crop
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 };
 
@@ -580,8 +516,6 @@ export default function Home() {
   const [formData, setFormData] = useState(DEFAULT_FORM_DATA);
   const [activeTab, setActiveTab] = useState('personal');
   const [showMobilePreview, setShowMobilePreview] = useState(false);
-  const [imageSrc, setImageSrc] = useState(null);
-  const [showCropModal, setShowCropModal] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [autoSaved, setAutoSaved] = useState(false);
   const fileInputRef = useRef(null);
@@ -589,7 +523,7 @@ export default function Home() {
   // Load from localStorage on mount
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('biodataFormData');
+      const saved = localStorage.getItem('biodataFormData_v2');
       if (saved) {
         const parsed = JSON.parse(saved);
         setFormData({ ...DEFAULT_FORM_DATA, ...parsed });
@@ -603,7 +537,7 @@ export default function Home() {
   useEffect(() => {
     const timer = setTimeout(() => {
       try {
-        localStorage.setItem('biodataFormData', JSON.stringify(formData));
+        localStorage.setItem('biodataFormData_v2', JSON.stringify(formData));
         setAutoSaved(true);
         setTimeout(() => setAutoSaved(false), 2000);
       } catch (e) {
@@ -618,40 +552,57 @@ export default function Home() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   }, []);
 
-  // Handle image upload
-  const handleImageUpload = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // Handle multiple photo upload
+  const handlePhotoUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
 
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error('Image size should be less than 10MB');
+    const currentCount = (formData.photos || []).length;
+    const maxNew = 4 - currentCount;
+
+    if (files.length > maxNew) {
+      toast.error(`You can add only ${maxNew} more photo${maxNew === 1 ? '' : 's'} (max 4)`);
+    }
+
+    const filesToProcess = files.slice(0, maxNew);
+    if (filesToProcess.length === 0) {
+      toast.error('Maximum 4 photos allowed');
+      e.target.value = '';
       return;
     }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImageSrc(reader.result);
-      setShowCropModal(true);
-    };
-    reader.readAsDataURL(file);
+    toast.loading('Processing photos...');
+
+    try {
+      const newPhotos = await Promise.all(
+        filesToProcess.map((file) => resizeImage(file, 1200))
+      );
+
+      setFormData((prev) => ({
+        ...prev,
+        photos: [...(prev.photos || []), ...newPhotos],
+      }));
+
+      toast.dismiss();
+      toast.success(`${newPhotos.length} photo${newPhotos.length > 1 ? 's' : ''} added!`);
+    } catch (err) {
+      toast.dismiss();
+      toast.error('Failed to process photos');
+    }
+
     e.target.value = '';
   };
 
-  // Handle crop complete
-  const handleCropComplete = (croppedImage) => {
-    updateField('photo', croppedImage);
-    setShowCropModal(false);
-    setImageSrc(null);
-    toast.success('Photo updated successfully!');
-  };
-
-  // Remove photo
-  const removePhoto = () => {
-    updateField('photo', '');
+  // Remove a photo
+  const removePhoto = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      photos: (prev.photos || []).filter((_, i) => i !== index),
+    }));
     toast.success('Photo removed');
   };
 
-  // Download PDF
+  // Download PDF (2 pages)
   const downloadPDF = async () => {
     setIsGeneratingPDF(true);
     toast.loading('Generating PDF...');
@@ -660,36 +611,37 @@ export default function Home() {
       const html2canvas = (await import('html2canvas')).default;
       const { jsPDF } = await import('jspdf');
 
-      const element = document.getElementById('biodata-preview');
-      if (!element) throw new Error('Preview element not found');
-
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#FFFEF7',
-        allowTaint: true,
-        imageTimeout: 15000,
-      });
-
-      const imgData = canvas.toDataURL('image/jpeg', 0.95);
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = pageWidth;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-      let heightLeft = imgHeight;
-      let position = 0;
+      // Page 1 - Information
+      const page1 = document.getElementById('biodata-page1');
+      if (page1) {
+        const canvas1 = await html2canvas(page1, {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          backgroundColor: '#FFFEF7',
+          allowTaint: true,
+        });
+        const img1 = canvas1.toDataURL('image/jpeg', 0.95);
+        pdf.addImage(img1, 'JPEG', 0, 0, pageWidth, pageHeight);
+      }
 
-      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      while (heightLeft > 0) {
-        position = heightLeft - imgHeight;
+      // Page 2 - Photos (only if photos exist)
+      const page2 = document.getElementById('biodata-page2');
+      if (page2 && (formData.photos || []).length > 0) {
         pdf.addPage();
-        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+        const canvas2 = await html2canvas(page2, {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          backgroundColor: '#FFFEF7',
+          allowTaint: true,
+        });
+        const img2 = canvas2.toDataURL('image/jpeg', 0.95);
+        pdf.addImage(img2, 'JPEG', 0, 0, pageWidth, pageHeight);
       }
 
       const name = formData.fullName || 'biodata';
@@ -706,22 +658,17 @@ export default function Home() {
     }
   };
 
-  // Print biodata
-  const handlePrint = () => {
-    window.print();
-  };
+  const handlePrint = () => window.print();
 
-  // Share on WhatsApp
   const shareWhatsApp = () => {
     const text = `Marriage Biodata - ${formData.fullName || 'Biodata'}\n\nCreate your own biodata at: ${window.location.href}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   };
 
-  // Reset form
   const resetForm = () => {
     if (window.confirm('Are you sure you want to reset all fields? This cannot be undone.')) {
       setFormData(DEFAULT_FORM_DATA);
-      localStorage.removeItem('biodataFormData');
+      localStorage.removeItem('biodataFormData_v2');
       toast.success('Form has been reset');
     }
   };
@@ -731,7 +678,7 @@ export default function Home() {
     { value: 'career', label: 'Career', icon: GraduationCap },
     { value: 'family', label: 'Family', icon: Users },
     { value: 'about', label: 'About', icon: Heart },
-    { value: 'contact', label: 'Contact', icon: Phone },
+    { value: 'photos', label: 'Photos', icon: Camera },
   ];
 
   return (
@@ -760,7 +707,8 @@ export default function Home() {
               variant="outline"
               size="sm"
               onClick={resetForm}
-              className="text-muted-foreground border-gold/30 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+              className="text-muted-foreground hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+              style={{ borderColor: '#D4AF3744' }}
             >
               <RotateCcw size={14} className="mr-1" /> Reset
             </Button>
@@ -773,7 +721,8 @@ export default function Home() {
         <Button
           variant={!showMobilePreview ? 'default' : 'outline'}
           size="sm"
-          className={!showMobilePreview ? 'flex-1 bg-maroon hover:bg-maroon-dark text-white' : 'flex-1'}
+          className={!showMobilePreview ? 'flex-1 text-white' : 'flex-1'}
+          style={!showMobilePreview ? { backgroundColor: '#8B1A1A' } : {}}
           onClick={() => setShowMobilePreview(false)}
         >
           <Edit3 size={14} className="mr-1" /> Edit
@@ -781,7 +730,8 @@ export default function Home() {
         <Button
           variant={showMobilePreview ? 'default' : 'outline'}
           size="sm"
-          className={showMobilePreview ? 'flex-1 bg-maroon hover:bg-maroon-dark text-white' : 'flex-1'}
+          className={showMobilePreview ? 'flex-1 text-white' : 'flex-1'}
+          style={showMobilePreview ? { backgroundColor: '#8B1A1A' } : {}}
           onClick={() => setShowMobilePreview(true)}
         >
           <Eye size={14} className="mr-1" /> Preview
@@ -793,10 +743,10 @@ export default function Home() {
         <div className="flex gap-6 items-start">
           {/* Form Panel */}
           <div className={`w-full lg:w-[420px] xl:w-[460px] shrink-0 ${showMobilePreview ? 'hidden lg:block' : ''}`}>
-            <div className="bg-white rounded-xl shadow-sm border border-gold/20 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border overflow-hidden" style={{ borderColor: '#D4AF3733' }}>
               <div className="p-5 border-b" style={{ borderColor: '#E8D48B33', background: '#FBF5E6' }}>
                 <h2 className="text-lg font-bold font-playfair" style={{ color: '#8B1A1A' }}>Create Your Biodata</h2>
-                <p className="text-xs text-muted-foreground mt-0.5">Fill in your details below. Preview updates instantly.</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Fill in your details. Preview updates instantly.</p>
               </div>
 
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -806,7 +756,8 @@ export default function Home() {
                       <TabsTrigger
                         key={value}
                         value={value}
-                        className="flex-1 min-w-0 text-xs gap-1 data-[state=active]:bg-white data-[state=active]:text-maroon data-[state=active]:shadow-sm"
+                        className="flex-1 min-w-0 text-xs gap-1 data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                        style={{ color: activeTab === value ? '#8B1A1A' : undefined }}
                       >
                         <Icon size={13} />
                         <span className="hidden sm:inline">{label}</span>
@@ -853,7 +804,6 @@ export default function Home() {
                     <FormField label="College / University" field="college" placeholder="e.g., IIT Delhi" value={formData.college} onChange={updateField} />
                     <FormField label="Occupation" field="occupation" placeholder="e.g., Software Engineer" value={formData.occupation} onChange={updateField} />
                     <FormField label="Company / Organization" field="company" placeholder="e.g., Google India" value={formData.company} onChange={updateField} />
-                    <FormField label="Annual Income" field="income" placeholder="e.g., 12 LPA" value={formData.income} onChange={updateField} />
                     <FormField label="Work Location" field="workLocation" placeholder="e.g., Bengaluru" value={formData.workLocation} onChange={updateField} />
                   </TabsContent>
 
@@ -874,7 +824,7 @@ export default function Home() {
                     <FormSelectField label="Family Type" field="familyType" options={FAMILY_TYPE_OPTIONS} placeholder="Select" value={formData.familyType} onChange={updateField} />
                   </TabsContent>
 
-                  {/* About Tab */}
+                  {/* About & Contact Tab */}
                   <TabsContent value="about" className="mt-0 space-y-4">
                     <FormTextareaField
                       label="About Me"
@@ -884,91 +834,80 @@ export default function Home() {
                       value={formData.aboutMe}
                       onChange={updateField}
                     />
-                    <FormField label="Hobbies & Interests" field="hobbies" placeholder="e.g., Reading, Traveling, Cooking (comma separated)" value={formData.hobbies} onChange={updateField} />
                     <Separator className="bg-gold/10" />
-                    <p className="text-sm font-semibold" style={{ color: '#8B1A1A' }}>Partner Preferences</p>
-                    <div className="grid grid-cols-2 gap-3">
-                      <FormField label="Preferred Age" field="partnerAge" placeholder="e.g., 23-27" value={formData.partnerAge} onChange={updateField} />
-                      <FormField label="Preferred Height" field="partnerHeight" placeholder="e.g., 5ft 2in - 5ft 6in" value={formData.partnerHeight} onChange={updateField} />
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <FormField label="Preferred Education" field="partnerEducation" placeholder="e.g., Graduate" value={formData.partnerEducation} onChange={updateField} />
-                      <FormField label="Preferred Occupation" field="partnerOccupation" placeholder="e.g., Any" value={formData.partnerOccupation} onChange={updateField} />
-                    </div>
-                    <FormTextareaField
-                      label="Other Preferences"
-                      field="partnerPreferences"
-                      placeholder="Any other preferences or expectations..."
-                      rows={3}
-                      value={formData.partnerPreferences}
-                      onChange={updateField}
-                    />
-                  </TabsContent>
-
-                  {/* Contact Tab */}
-                  <TabsContent value="contact" className="mt-0 space-y-4">
-                    {/* Photo Upload */}
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-foreground">Profile Photo</Label>
-                      <div className="flex items-center gap-4">
-                        <div
-                          className="w-24 h-32 rounded-lg border-2 border-dashed flex items-center justify-center overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
-                          style={{ borderColor: '#D4AF3766', background: '#FBF5E6' }}
-                          onClick={() => fileInputRef.current?.click()}
-                        >
-                          {formData.photo ? (
-                            <img src={formData.photo} alt="Preview" className="w-full h-full object-cover rounded-md" />
-                          ) : (
-                            <div className="text-center p-2">
-                              <Camera size={24} className="mx-auto mb-1" style={{ color: '#D4AF37' }} />
-                              <span className="text-[10px]" style={{ color: '#B8960C' }}>Upload Photo</span>
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex-1 space-y-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full"
-                            style={{ borderColor: '#D4AF3744', color: '#8B1A1A' }}
-                            onClick={() => fileInputRef.current?.click()}
-                          >
-                            <Camera size={14} className="mr-2" />
-                            {formData.photo ? 'Change Photo' : 'Upload Photo'}
-                          </Button>
-                          {formData.photo && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="w-full text-red-500 hover:bg-red-50 hover:text-red-600"
-                              onClick={removePhoto}
-                            >
-                              <Trash2 size={14} className="mr-2" /> Remove
-                            </Button>
-                          )}
-                        </div>
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={handleImageUpload}
-                        />
-                      </div>
-                    </div>
-
-                    <Separator className="bg-gold/10" />
-
+                    <p className="text-sm font-semibold" style={{ color: '#8B1A1A' }}>Contact Information</p>
                     <FormField label="Contact Number" field="contactNumber" placeholder="e.g., +91 98765 43210" value={formData.contactNumber} onChange={updateField} />
                     <FormField label="Email Address" field="email" placeholder="e.g., name@email.com" type="email" value={formData.email} onChange={updateField} />
                     <FormTextareaField
                       label="Address"
                       field="address"
                       placeholder="Your residential address..."
-                      rows={3}
+                      rows={2}
                       value={formData.address}
                       onChange={updateField}
                     />
+                  </TabsContent>
+
+                  {/* Photos Tab */}
+                  <TabsContent value="photos" className="mt-0 space-y-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-sm font-medium">Photos ({(formData.photos || []).length}/4)</Label>
+                        {(formData.photos || []).length < 4 && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            style={{ borderColor: '#D4AF3744', color: '#8B1A1A' }}
+                            onClick={() => fileInputRef.current?.click()}
+                          >
+                            <Plus size={14} className="mr-1" /> Add Photos
+                          </Button>
+                        )}
+                      </div>
+
+                      <p className="text-xs text-muted-foreground">
+                        Upload up to 4 photos for your biodata. These will appear on page 2 of your PDF.
+                      </p>
+
+                      {/* Photo Grid */}
+                      <div className="grid grid-cols-2 gap-3">
+                        {(formData.photos || []).map((photo, i) => (
+                          <div key={i} className="relative group rounded-lg overflow-hidden border" style={{ borderColor: '#D4AF3744', aspectRatio: '3/4' }}>
+                            <img src={photo} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
+                            <button
+                              onClick={() => removePhoto(i)}
+                              className="absolute top-2 right-2 w-7 h-7 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                            >
+                              <X size={14} />
+                            </button>
+                            <div className="absolute bottom-0 left-0 right-0 bg-black/40 text-white text-[10px] text-center py-1">
+                              Photo {i + 1}
+                            </div>
+                          </div>
+                        ))}
+
+                        {/* Add Photo Placeholder */}
+                        {(formData.photos || []).length < 4 && (
+                          <div
+                            className="rounded-lg border-2 border-dashed flex flex-col items-center justify-center cursor-pointer hover:opacity-70 transition-opacity"
+                            style={{ borderColor: '#D4AF3766', background: '#FBF5E6', aspectRatio: '3/4' }}
+                            onClick={() => fileInputRef.current?.click()}
+                          >
+                            <ImagePlus size={28} style={{ color: '#D4AF37' }} />
+                            <span className="text-xs mt-1" style={{ color: '#B8960C' }}>Add Photo</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        onChange={handlePhotoUpload}
+                      />
+                    </div>
                   </TabsContent>
                 </div>
               </Tabs>
@@ -1018,10 +957,22 @@ export default function Home() {
               </div>
               <div className="rounded-xl p-4 border" style={{ borderColor: '#D4AF3722', background: '#F5F0E6' }}>
                 <div
-                  className="overflow-auto rounded-lg shadow-lg"
+                  className="overflow-auto rounded-lg shadow-lg space-y-4"
                   style={{ maxHeight: 'calc(100vh - 150px)' }}
                 >
-                  <BiodataTemplate formData={formData} />
+                  {/* Page 1: Information */}
+                  <div>
+                    <p className="text-[10px] text-muted-foreground mb-1 font-medium">Page 1 — Information</p>
+                    <BiodataPage1 formData={formData} />
+                  </div>
+
+                  {/* Page 2: Photos */}
+                  {(formData.photos || []).length > 0 && (
+                    <div>
+                      <p className="text-[10px] text-muted-foreground mb-1 font-medium">Page 2 — Photos</p>
+                      <BiodataPage2 formData={formData} />
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -1059,10 +1010,9 @@ export default function Home() {
           <p className="text-sm text-muted-foreground max-w-2xl mx-auto mb-4">
             Create beautiful matrimonial biodata for marriage in minutes. Our free online biodata maker provides
             a premium template with photo upload, live preview, and instant PDF download. No signup required.
-            Perfect for sharing with families via WhatsApp, email, or print.
           </p>
           <div className="flex flex-wrap justify-center gap-2 mb-4">
-            {['Biodata for Marriage', 'Marriage Biodata Format', 'Free Biodata Maker', 'Indian Marriage Biodata', 'Shaadi Biodata Template'].map((tag) => (
+            {['Biodata for Marriage', 'Marriage Biodata Format', 'Free Biodata Maker', 'Indian Marriage Biodata'].map((tag) => (
               <Badge key={tag} variant="secondary" className="text-xs bg-white/80 text-muted-foreground">
                 {tag}
               </Badge>
@@ -1073,17 +1023,6 @@ export default function Home() {
           </p>
         </div>
       </footer>
-
-      {/* Image Crop Modal */}
-      <ImageCropModal
-        imageSrc={imageSrc}
-        open={showCropModal}
-        onClose={() => {
-          setShowCropModal(false);
-          setImageSrc(null);
-        }}
-        onComplete={handleCropComplete}
-      />
     </div>
   );
 }
