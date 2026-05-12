@@ -16,8 +16,8 @@ import { Toaster } from '@/components/ui/sonner';
 import Cropper from 'react-easy-crop';
 import {
   Download, Eye, Edit3, User, GraduationCap, Users, Heart, Phone,
-  Camera, Trash2, RotateCcw, FileText, Printer, Share2, ChevronRight,
-  ChevronLeft, Sparkles, Save, CheckCircle2
+  Camera, Trash2, RotateCcw, FileText, Printer, Share2,
+  Sparkles, Save, CheckCircle2
 } from 'lucide-react';
 
 // ============================================================
@@ -119,44 +119,121 @@ const getCroppedImg = async (imageSrc, pixelCrop) => {
 };
 
 // ============================================================
-// TEMPLATE COMPONENTS
+// FORM COMPONENTS (defined OUTSIDE Home to prevent re-mount)
+// ============================================================
+
+const FormField = ({ label, field, placeholder, type = 'text', value, onChange, ...props }) => (
+  <div className="space-y-1.5">
+    <Label htmlFor={field} className="text-sm font-medium text-foreground">{label}</Label>
+    <Input
+      id={field}
+      type={type}
+      value={value || ''}
+      onChange={(e) => onChange(field, e.target.value)}
+      placeholder={placeholder}
+      className="h-10 bg-white border-gold/30 focus:border-gold focus:ring-gold/20"
+      {...props}
+    />
+  </div>
+);
+
+const FormSelectField = ({ label, field, options, placeholder, value, onChange }) => (
+  <div className="space-y-1.5">
+    <Label className="text-sm font-medium text-foreground">{label}</Label>
+    <Select value={value || ''} onValueChange={(v) => onChange(field, v)}>
+      <SelectTrigger className="h-10 bg-white border-gold/30 focus:border-gold focus:ring-gold/20">
+        <SelectValue placeholder={placeholder || `Select ${label}`} />
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((opt) => (
+          <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  </div>
+);
+
+const FormTextareaField = ({ label, field, placeholder, rows = 3, value, onChange }) => (
+  <div className="space-y-1.5">
+    <Label htmlFor={field} className="text-sm font-medium text-foreground">{label}</Label>
+    <Textarea
+      id={field}
+      value={value || ''}
+      onChange={(e) => onChange(field, e.target.value)}
+      placeholder={placeholder}
+      rows={rows}
+      className="bg-white border-gold/30 focus:border-gold focus:ring-gold/20 resize-none"
+    />
+  </div>
+);
+
+// ============================================================
+// TEMPLATE COMPONENTS (NO gradients - solid colors for PDF)
 // ============================================================
 
 const OrnamentalDivider = () => (
-  <div className="flex items-center justify-center my-2">
-    <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gold to-transparent" />
-    <div className="mx-3 text-gold text-xs">&#10022;</div>
-    <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gold to-transparent" />
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '8px 0' }}>
+    <div style={{ flex: 1, height: '1px', backgroundColor: '#D4AF37' }} />
+    <div style={{ margin: '0 12px', color: '#D4AF37', fontSize: '12px' }}>&#10022;</div>
+    <div style={{ flex: 1, height: '1px', backgroundColor: '#D4AF37' }} />
   </div>
 );
 
 const SectionTitle = ({ title }) => (
-  <div className="flex items-center gap-3 my-4">
-    <div className="h-px flex-1" style={{ background: 'linear-gradient(to right, transparent, #D4AF37)' }} />
-    <span className="text-xs font-semibold tracking-[0.2em] uppercase" style={{ color: '#8B1A1A' }}>{title}</span>
-    <div className="h-px flex-1" style={{ background: 'linear-gradient(to left, transparent, #D4AF37)' }} />
+  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '20px 0 12px' }}>
+    <div style={{ flex: 1, height: '1px', backgroundColor: '#D4AF37' }} />
+    <span style={{
+      fontSize: '11px',
+      fontWeight: 700,
+      letterSpacing: '0.2em',
+      textTransform: 'uppercase',
+      color: '#8B1A1A',
+      whiteSpace: 'nowrap'
+    }}>{title}</span>
+    <div style={{ flex: 1, height: '1px', backgroundColor: '#D4AF37' }} />
   </div>
 );
 
 const DetailRow = ({ label, value }) => {
   if (!value) return null;
   return (
-    <div className="flex py-1.5 text-sm">
-      <span className="w-[140px] shrink-0 font-medium" style={{ color: '#6B5B3E' }}>{label}</span>
-      <span className="mx-2" style={{ color: '#D4AF37' }}>:</span>
-      <span className="flex-1 font-medium" style={{ color: '#2D2418' }}>{value}</span>
-    </div>
+    <tr>
+      <td style={{
+        padding: '5px 0',
+        fontSize: '13px',
+        fontWeight: 500,
+        color: '#6B5B3E',
+        whiteSpace: 'nowrap',
+        verticalAlign: 'top',
+        width: '160px'
+      }}>{label}</td>
+      <td style={{
+        padding: '5px 8px',
+        fontSize: '13px',
+        color: '#D4AF37',
+        verticalAlign: 'top',
+        width: '12px'
+      }}>:</td>
+      <td style={{
+        padding: '5px 0',
+        fontSize: '13px',
+        fontWeight: 600,
+        color: '#2D2418',
+        verticalAlign: 'top',
+        wordBreak: 'break-word'
+      }}>{value}</td>
+    </tr>
   );
 };
 
 // ============================================================
-// BIODATA TEMPLATE
+// BIODATA TEMPLATE (all inline styles, no gradients)
 // ============================================================
 
 const BiodataTemplate = ({ formData }) => {
   const hasPersonalDetails = formData.height || formData.weight || formData.complexion ||
-    formData.bloodGroup || formData.maritalStatus || formData.religion || formData.caste ||
-    formData.motherTongue || formData.gotra || formData.subCaste || formData.dateOfBirth;
+    formData.bloodGroup || formData.religion || formData.caste ||
+    formData.motherTongue || formData.gotra || formData.subCaste || formData.dateOfBirth || formData.age;
 
   const hasCareerDetails = formData.education || formData.college || formData.occupation ||
     formData.company || formData.income || formData.workLocation;
@@ -172,94 +249,87 @@ const BiodataTemplate = ({ formData }) => {
   return (
     <div
       id="biodata-preview"
-      className="relative mx-auto"
       style={{
         width: '595px',
         minHeight: '842px',
-        background: 'linear-gradient(135deg, #FFFEF7 0%, #FFF9EC 50%, #FFFEF7 100%)',
-        fontFamily: 'Georgia, serif',
+        backgroundColor: '#FFFEF7',
+        fontFamily: 'Georgia, "Times New Roman", serif',
         padding: '12px',
+        margin: '0 auto',
       }}
     >
       {/* Outer decorative border */}
       <div
-        className="relative h-full"
         style={{
           border: '2px solid #D4AF37',
           padding: '4px',
+          minHeight: '818px',
+          position: 'relative',
         }}
       >
         {/* Inner border */}
         <div
-          className="h-full"
           style={{
             border: '1px solid #D4AF37',
             padding: '24px 28px',
+            minHeight: '806px',
           }}
         >
           {/* Corner decorations */}
-          <div className="absolute top-2 left-2 w-5 h-5 border-t-2 border-l-2" style={{ borderColor: '#8B1A1A' }} />
-          <div className="absolute top-2 right-2 w-5 h-5 border-t-2 border-r-2" style={{ borderColor: '#8B1A1A' }} />
-          <div className="absolute bottom-2 left-2 w-5 h-5 border-b-2 border-l-2" style={{ borderColor: '#8B1A1A' }} />
-          <div className="absolute bottom-2 right-2 w-5 h-5 border-b-2 border-r-2" style={{ borderColor: '#8B1A1A' }} />
+          <div style={{ position: 'absolute', top: '8px', left: '8px', width: '20px', height: '20px', borderTop: '2px solid #8B1A1A', borderLeft: '2px solid #8B1A1A' }} />
+          <div style={{ position: 'absolute', top: '8px', right: '8px', width: '20px', height: '20px', borderTop: '2px solid #8B1A1A', borderRight: '2px solid #8B1A1A' }} />
+          <div style={{ position: 'absolute', bottom: '8px', left: '8px', width: '20px', height: '20px', borderBottom: '2px solid #8B1A1A', borderLeft: '2px solid #8B1A1A' }} />
+          <div style={{ position: 'absolute', bottom: '8px', right: '8px', width: '20px', height: '20px', borderBottom: '2px solid #8B1A1A', borderRight: '2px solid #8B1A1A' }} />
 
           {/* Header */}
-          <div className="text-center mb-4">
-            <p className="text-sm mb-1" style={{ color: '#D4AF37', fontFamily: 'Georgia, serif' }}>
+          <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+            <p style={{ fontSize: '13px', marginBottom: '4px', color: '#D4AF37', fontFamily: 'Georgia, serif' }}>
               || &#2358;&#2381;&#2352;&#2368; &#2327;&#2339;&#2375;&#2358;&#2366;&#2351; &#2344;&#2350;&#2307; ||
             </p>
             <OrnamentalDivider />
-            <h1
-              className="text-3xl font-bold tracking-[0.15em] uppercase my-3"
-              style={{
-                color: '#8B1A1A',
-                fontFamily: 'var(--font-playfair), Georgia, serif',
-                textShadow: '0 1px 2px rgba(139, 26, 26, 0.1)',
-              }}
-            >
+            <h1 style={{
+              fontSize: '28px',
+              fontWeight: 700,
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              margin: '12px 0',
+              color: '#8B1A1A',
+              fontFamily: 'var(--font-playfair), Georgia, serif',
+            }}>
               Biodata
             </h1>
             <OrnamentalDivider />
           </div>
 
           {/* Photo + Name Section */}
-          <div className="flex items-start gap-6 mb-5">
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '24px', marginBottom: '20px' }}>
             {/* Photo */}
-            <div className="shrink-0">
-              <div
-                className="relative"
-                style={{
-                  width: '140px',
-                  height: '175px',
-                  border: '3px solid #D4AF37',
-                  padding: '3px',
-                  background: '#FFF',
-                }}
-              >
-                <div
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    border: '1px solid #E8D48B',
-                    overflow: 'hidden',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: formData.photo ? 'transparent' : '#FBF5E6',
-                  }}
-                >
+            <div style={{ flexShrink: 0 }}>
+              <div style={{
+                width: '140px',
+                height: '175px',
+                border: '3px solid #D4AF37',
+                padding: '3px',
+                backgroundColor: '#FFF',
+              }}>
+                <div style={{
+                  width: '100%',
+                  height: '100%',
+                  border: '1px solid #E8D48B',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: formData.photo ? 'transparent' : '#FBF5E6',
+                }}>
                   {formData.photo ? (
                     <img
                       src={formData.photo}
                       alt="Profile"
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                      }}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                     />
                   ) : (
-                    <div className="text-center">
+                    <div style={{ textAlign: 'center' }}>
                       <Camera size={28} style={{ color: '#D4AF37', margin: '0 auto 4px' }} />
                       <p style={{ fontSize: '10px', color: '#B8960C' }}>Your Photo</p>
                     </div>
@@ -269,17 +339,17 @@ const BiodataTemplate = ({ formData }) => {
             </div>
 
             {/* Name & Quick Info */}
-            <div className="flex-1 pt-2">
-              <h2
-                className="text-2xl font-bold mb-2"
-                style={{
-                  color: '#8B1A1A',
-                  fontFamily: 'var(--font-playfair), Georgia, serif',
-                }}
-              >
+            <div style={{ flex: 1, paddingTop: '8px' }}>
+              <h2 style={{
+                fontSize: '22px',
+                fontWeight: 700,
+                marginBottom: '8px',
+                color: '#8B1A1A',
+                fontFamily: 'var(--font-playfair), Georgia, serif',
+              }}>
                 {formData.fullName || 'Your Full Name'}
               </h2>
-              <div className="space-y-1.5 text-sm" style={{ color: '#4A3F2F' }}>
+              <div style={{ fontSize: '13px', color: '#4A3F2F', lineHeight: 1.8 }}>
                 {formData.dateOfBirth && (
                   <p><span style={{ color: '#6B5B3E' }}>Date of Birth:</span> {formData.dateOfBirth}{formData.age ? ` (${formData.age} yrs)` : ''}</p>
                 )}
@@ -303,20 +373,22 @@ const BiodataTemplate = ({ formData }) => {
           {hasPersonalDetails && (
             <>
               <SectionTitle title="Personal Details" />
-              <div className="grid grid-cols-2 gap-x-8">
-                <DetailRow label="Date of Birth" value={formData.dateOfBirth} />
-                <DetailRow label="Age" value={formData.age ? `${formData.age} years` : ''} />
-                <DetailRow label="Height" value={formData.height} />
-                <DetailRow label="Weight" value={formData.weight ? `${formData.weight} kg` : ''} />
-                <DetailRow label="Complexion" value={formData.complexion} />
-                <DetailRow label="Blood Group" value={formData.bloodGroup} />
-                <DetailRow label="Marital Status" value={formData.maritalStatus !== 'Never Married' ? formData.maritalStatus : (formData.maritalStatus || '')} />
-                <DetailRow label="Religion" value={formData.religion} />
-                <DetailRow label="Caste" value={formData.caste} />
-                <DetailRow label="Sub-Caste" value={formData.subCaste} />
-                <DetailRow label="Gotra" value={formData.gotra} />
-                <DetailRow label="Mother Tongue" value={formData.motherTongue} />
-              </div>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <tbody>
+                  <DetailRow label="Date of Birth" value={formData.dateOfBirth} />
+                  <DetailRow label="Age" value={formData.age ? `${formData.age} years` : ''} />
+                  <DetailRow label="Height" value={formData.height} />
+                  <DetailRow label="Weight" value={formData.weight ? `${formData.weight} kg` : ''} />
+                  <DetailRow label="Complexion" value={formData.complexion} />
+                  <DetailRow label="Blood Group" value={formData.bloodGroup} />
+                  <DetailRow label="Marital Status" value={formData.maritalStatus} />
+                  <DetailRow label="Religion" value={formData.religion} />
+                  <DetailRow label="Caste" value={formData.caste} />
+                  <DetailRow label="Sub-Caste" value={formData.subCaste} />
+                  <DetailRow label="Gotra" value={formData.gotra} />
+                  <DetailRow label="Mother Tongue" value={formData.motherTongue} />
+                </tbody>
+              </table>
             </>
           )}
 
@@ -324,14 +396,16 @@ const BiodataTemplate = ({ formData }) => {
           {hasCareerDetails && (
             <>
               <SectionTitle title="Education & Career" />
-              <div className="grid grid-cols-2 gap-x-8">
-                <DetailRow label="Education" value={formData.education} />
-                <DetailRow label="College" value={formData.college} />
-                <DetailRow label="Occupation" value={formData.occupation} />
-                <DetailRow label="Company" value={formData.company} />
-                <DetailRow label="Annual Income" value={formData.income} />
-                <DetailRow label="Work Location" value={formData.workLocation} />
-              </div>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <tbody>
+                  <DetailRow label="Education" value={formData.education} />
+                  <DetailRow label="College / University" value={formData.college} />
+                  <DetailRow label="Occupation" value={formData.occupation} />
+                  <DetailRow label="Company" value={formData.company} />
+                  <DetailRow label="Annual Income" value={formData.income} />
+                  <DetailRow label="Work Location" value={formData.workLocation} />
+                </tbody>
+              </table>
             </>
           )}
 
@@ -339,15 +413,17 @@ const BiodataTemplate = ({ formData }) => {
           {hasFamilyDetails && (
             <>
               <SectionTitle title="Family Details" />
-              <div className="grid grid-cols-2 gap-x-8">
-                <DetailRow label="Father's Name" value={formData.fatherName} />
-                <DetailRow label="Father's Occupation" value={formData.fatherOccupation} />
-                <DetailRow label="Mother's Name" value={formData.motherName} />
-                <DetailRow label="Mother's Occupation" value={formData.motherOccupation} />
-                <DetailRow label="Brothers" value={formData.brothers} />
-                <DetailRow label="Sisters" value={formData.sisters} />
-                <DetailRow label="Family Type" value={formData.familyType} />
-              </div>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <tbody>
+                  <DetailRow label="Father's Name" value={formData.fatherName} />
+                  <DetailRow label="Father's Occupation" value={formData.fatherOccupation} />
+                  <DetailRow label="Mother's Name" value={formData.motherName} />
+                  <DetailRow label="Mother's Occupation" value={formData.motherOccupation} />
+                  <DetailRow label="Brothers" value={formData.brothers} />
+                  <DetailRow label="Sisters" value={formData.sisters} />
+                  <DetailRow label="Family Type" value={formData.familyType} />
+                </tbody>
+              </table>
             </>
           )}
 
@@ -355,7 +431,7 @@ const BiodataTemplate = ({ formData }) => {
           {formData.aboutMe && (
             <>
               <SectionTitle title="About Me" />
-              <p className="text-sm leading-relaxed" style={{ color: '#2D2418' }}>
+              <p style={{ fontSize: '13px', lineHeight: 1.7, color: '#2D2418' }}>
                 {formData.aboutMe}
               </p>
             </>
@@ -365,13 +441,15 @@ const BiodataTemplate = ({ formData }) => {
           {formData.hobbies && (
             <>
               <SectionTitle title="Hobbies & Interests" />
-              <div className="flex flex-wrap gap-2">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {formData.hobbies.split(',').map((hobby, i) => (
                   <span
                     key={i}
-                    className="text-xs px-3 py-1 rounded-full"
                     style={{
-                      background: '#FBF5E6',
+                      fontSize: '12px',
+                      padding: '4px 14px',
+                      borderRadius: '20px',
+                      backgroundColor: '#FBF5E6',
                       color: '#6B5B3E',
                       border: '1px solid #E8D48B',
                     }}
@@ -387,14 +465,16 @@ const BiodataTemplate = ({ formData }) => {
           {hasPartnerPrefs && (
             <>
               <SectionTitle title="Partner Preferences" />
-              <div className="grid grid-cols-2 gap-x-8">
-                <DetailRow label="Preferred Age" value={formData.partnerAge} />
-                <DetailRow label="Preferred Height" value={formData.partnerHeight} />
-                <DetailRow label="Preferred Education" value={formData.partnerEducation} />
-                <DetailRow label="Preferred Occupation" value={formData.partnerOccupation} />
-              </div>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <tbody>
+                  <DetailRow label="Preferred Age" value={formData.partnerAge} />
+                  <DetailRow label="Preferred Height" value={formData.partnerHeight} />
+                  <DetailRow label="Preferred Education" value={formData.partnerEducation} />
+                  <DetailRow label="Preferred Occupation" value={formData.partnerOccupation} />
+                </tbody>
+              </table>
               {formData.partnerPreferences && (
-                <p className="text-sm leading-relaxed mt-2" style={{ color: '#2D2418' }}>
+                <p style={{ fontSize: '13px', lineHeight: 1.7, color: '#2D2418', marginTop: '8px' }}>
                   {formData.partnerPreferences}
                 </p>
               )}
@@ -405,20 +485,20 @@ const BiodataTemplate = ({ formData }) => {
           {hasContact && (
             <>
               <SectionTitle title="Contact Information" />
-              <div className="grid grid-cols-2 gap-x-8">
-                <DetailRow label="Contact No." value={formData.contactNumber} />
-                <DetailRow label="Email" value={formData.email} />
-              </div>
-              {formData.address && (
-                <DetailRow label="Address" value={formData.address} />
-              )}
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <tbody>
+                  <DetailRow label="Contact No." value={formData.contactNumber} />
+                  <DetailRow label="Email" value={formData.email} />
+                  <DetailRow label="Address" value={formData.address} />
+                </tbody>
+              </table>
             </>
           )}
 
           {/* Footer */}
-          <div className="mt-6">
+          <div style={{ marginTop: '24px' }}>
             <OrnamentalDivider />
-            <p className="text-center text-xs mt-2" style={{ color: '#D4AF37' }}>
+            <p style={{ textAlign: 'center', fontSize: '12px', marginTop: '8px', color: '#D4AF37' }}>
               &#10022; &#10022; &#10022;
             </p>
           </div>
@@ -534,9 +614,9 @@ export default function Home() {
   }, [formData]);
 
   // Update form data
-  const updateField = (field, value) => {
+  const updateField = useCallback((field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+  }, []);
 
   // Handle image upload
   const handleImageUpload = (e) => {
@@ -589,6 +669,7 @@ export default function Home() {
         logging: false,
         backgroundColor: '#FFFEF7',
         allowTaint: true,
+        imageTimeout: 15000,
       });
 
       const imgData = canvas.toDataURL('image/jpeg', 0.95);
@@ -645,52 +726,6 @@ export default function Home() {
     }
   };
 
-  // Form field component
-  const FormField = ({ label, field, placeholder, type = 'text', ...props }) => (
-    <div className="space-y-1.5">
-      <Label htmlFor={field} className="text-sm font-medium text-foreground">{label}</Label>
-      <Input
-        id={field}
-        type={type}
-        value={formData[field] || ''}
-        onChange={(e) => updateField(field, e.target.value)}
-        placeholder={placeholder}
-        className="h-10 bg-white border-gold/30 focus:border-gold focus:ring-gold/20"
-        {...props}
-      />
-    </div>
-  );
-
-  const FormSelect = ({ label, field, options, placeholder }) => (
-    <div className="space-y-1.5">
-      <Label className="text-sm font-medium text-foreground">{label}</Label>
-      <Select value={formData[field] || ''} onValueChange={(v) => updateField(field, v)}>
-        <SelectTrigger className="h-10 bg-white border-gold/30 focus:border-gold focus:ring-gold/20">
-          <SelectValue placeholder={placeholder || `Select ${label}`} />
-        </SelectTrigger>
-        <SelectContent>
-          {options.map((opt) => (
-            <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-  );
-
-  const FormTextarea = ({ label, field, placeholder, rows = 3 }) => (
-    <div className="space-y-1.5">
-      <Label htmlFor={field} className="text-sm font-medium text-foreground">{label}</Label>
-      <Textarea
-        id={field}
-        value={formData[field] || ''}
-        onChange={(e) => updateField(field, e.target.value)}
-        placeholder={placeholder}
-        rows={rows}
-        className="bg-white border-gold/30 focus:border-gold focus:ring-gold/20 resize-none"
-      />
-    </div>
-  );
-
   const tabItems = [
     { value: 'personal', label: 'Personal', icon: User },
     { value: 'career', label: 'Career', icon: GraduationCap },
@@ -700,14 +735,14 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom, #FFF9EC, #FFFEF7, #FFF9EC)' }}>
+    <div className="min-h-screen" style={{ background: '#FFF9EC' }}>
       <Toaster richColors position="top-center" />
 
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #8B1A1A, #A0332F)' }}>
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: '#8B1A1A' }}>
               <FileText size={18} className="text-white" />
             </div>
             <div>
@@ -734,7 +769,7 @@ export default function Home() {
       </header>
 
       {/* Mobile Toggle */}
-      <div className="lg:hidden sticky top-[57px] z-40 bg-white/80 backdrop-blur-md border-b px-4 py-2 flex gap-2">
+      <div className="lg:hidden sticky top-[57px] z-40 bg-white/90 backdrop-blur-md border-b px-4 py-2 flex gap-2">
         <Button
           variant={!showMobilePreview ? 'default' : 'outline'}
           size="sm"
@@ -759,7 +794,7 @@ export default function Home() {
           {/* Form Panel */}
           <div className={`w-full lg:w-[420px] xl:w-[460px] shrink-0 ${showMobilePreview ? 'hidden lg:block' : ''}`}>
             <div className="bg-white rounded-xl shadow-sm border border-gold/20 overflow-hidden">
-              <div className="p-5 border-b border-gold/10" style={{ background: 'linear-gradient(to right, #FBF5E6, #FFF)' }}>
+              <div className="p-5 border-b" style={{ borderColor: '#E8D48B33', background: '#FBF5E6' }}>
                 <h2 className="text-lg font-bold font-playfair" style={{ color: '#8B1A1A' }}>Create Your Biodata</h2>
                 <p className="text-xs text-muted-foreground mt-0.5">Fill in your details below. Preview updates instantly.</p>
               </div>
@@ -783,86 +818,90 @@ export default function Home() {
                 <div className="p-4 max-h-[calc(100vh-280px)] overflow-y-auto scrollbar-thin">
                   {/* Personal Tab */}
                   <TabsContent value="personal" className="mt-0 space-y-4">
-                    <FormField label="Full Name" field="fullName" placeholder="Enter your full name" />
+                    <FormField label="Full Name" field="fullName" placeholder="Enter your full name" value={formData.fullName} onChange={updateField} />
                     <div className="grid grid-cols-2 gap-3">
-                      <FormSelect label="Gender" field="gender" options={GENDER_OPTIONS} placeholder="Select" />
-                      <FormField label="Date of Birth" field="dateOfBirth" placeholder="DD/MM/YYYY" />
+                      <FormSelectField label="Gender" field="gender" options={GENDER_OPTIONS} placeholder="Select" value={formData.gender} onChange={updateField} />
+                      <FormField label="Date of Birth" field="dateOfBirth" placeholder="DD/MM/YYYY" value={formData.dateOfBirth} onChange={updateField} />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <FormField label="Age" field="age" placeholder="e.g., 26" />
-                      <FormSelect label="Height" field="height" options={HEIGHT_OPTIONS} placeholder="Select" />
+                      <FormField label="Age" field="age" placeholder="e.g., 26" value={formData.age} onChange={updateField} />
+                      <FormSelectField label="Height" field="height" options={HEIGHT_OPTIONS} placeholder="Select" value={formData.height} onChange={updateField} />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <FormField label="Weight (kg)" field="weight" placeholder="e.g., 65" />
-                      <FormSelect label="Complexion" field="complexion" options={COMPLEXION_OPTIONS} placeholder="Select" />
+                      <FormField label="Weight (kg)" field="weight" placeholder="e.g., 65" value={formData.weight} onChange={updateField} />
+                      <FormSelectField label="Complexion" field="complexion" options={COMPLEXION_OPTIONS} placeholder="Select" value={formData.complexion} onChange={updateField} />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <FormSelect label="Blood Group" field="bloodGroup" options={BLOOD_GROUP_OPTIONS} placeholder="Select" />
-                      <FormSelect label="Marital Status" field="maritalStatus" options={MARITAL_STATUS_OPTIONS} placeholder="Select" />
+                      <FormSelectField label="Blood Group" field="bloodGroup" options={BLOOD_GROUP_OPTIONS} placeholder="Select" value={formData.bloodGroup} onChange={updateField} />
+                      <FormSelectField label="Marital Status" field="maritalStatus" options={MARITAL_STATUS_OPTIONS} placeholder="Select" value={formData.maritalStatus} onChange={updateField} />
                     </div>
                     <Separator className="bg-gold/10" />
-                    <FormSelect label="Religion" field="religion" options={RELIGION_OPTIONS} placeholder="Select religion" />
+                    <FormSelectField label="Religion" field="religion" options={RELIGION_OPTIONS} placeholder="Select religion" value={formData.religion} onChange={updateField} />
                     <div className="grid grid-cols-2 gap-3">
-                      <FormField label="Caste / Community" field="caste" placeholder="e.g., Brahmin" />
-                      <FormField label="Sub-Caste" field="subCaste" placeholder="Optional" />
+                      <FormField label="Caste / Community" field="caste" placeholder="e.g., Brahmin" value={formData.caste} onChange={updateField} />
+                      <FormField label="Sub-Caste" field="subCaste" placeholder="Optional" value={formData.subCaste} onChange={updateField} />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <FormField label="Gotra" field="gotra" placeholder="Optional" />
-                      <FormField label="Mother Tongue" field="motherTongue" placeholder="e.g., Hindi" />
+                      <FormField label="Gotra" field="gotra" placeholder="Optional" value={formData.gotra} onChange={updateField} />
+                      <FormField label="Mother Tongue" field="motherTongue" placeholder="e.g., Hindi" value={formData.motherTongue} onChange={updateField} />
                     </div>
                   </TabsContent>
 
                   {/* Career Tab */}
                   <TabsContent value="career" className="mt-0 space-y-4">
-                    <FormField label="Highest Education" field="education" placeholder="e.g., B.Tech, MBA" />
-                    <FormField label="College / University" field="college" placeholder="e.g., IIT Delhi" />
-                    <FormField label="Occupation" field="occupation" placeholder="e.g., Software Engineer" />
-                    <FormField label="Company / Organization" field="company" placeholder="e.g., Google India" />
-                    <FormField label="Annual Income" field="income" placeholder="e.g., 12 LPA" />
-                    <FormField label="Work Location" field="workLocation" placeholder="e.g., Bengaluru" />
+                    <FormField label="Highest Education" field="education" placeholder="e.g., B.Tech, MBA" value={formData.education} onChange={updateField} />
+                    <FormField label="College / University" field="college" placeholder="e.g., IIT Delhi" value={formData.college} onChange={updateField} />
+                    <FormField label="Occupation" field="occupation" placeholder="e.g., Software Engineer" value={formData.occupation} onChange={updateField} />
+                    <FormField label="Company / Organization" field="company" placeholder="e.g., Google India" value={formData.company} onChange={updateField} />
+                    <FormField label="Annual Income" field="income" placeholder="e.g., 12 LPA" value={formData.income} onChange={updateField} />
+                    <FormField label="Work Location" field="workLocation" placeholder="e.g., Bengaluru" value={formData.workLocation} onChange={updateField} />
                   </TabsContent>
 
                   {/* Family Tab */}
                   <TabsContent value="family" className="mt-0 space-y-4">
                     <div className="grid grid-cols-2 gap-3">
-                      <FormField label="Father's Name" field="fatherName" placeholder="Full name" />
-                      <FormField label="Father's Occupation" field="fatherOccupation" placeholder="e.g., Businessman" />
+                      <FormField label="Father's Name" field="fatherName" placeholder="Full name" value={formData.fatherName} onChange={updateField} />
+                      <FormField label="Father's Occupation" field="fatherOccupation" placeholder="e.g., Businessman" value={formData.fatherOccupation} onChange={updateField} />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <FormField label="Mother's Name" field="motherName" placeholder="Full name" />
-                      <FormField label="Mother's Occupation" field="motherOccupation" placeholder="e.g., Homemaker" />
+                      <FormField label="Mother's Name" field="motherName" placeholder="Full name" value={formData.motherName} onChange={updateField} />
+                      <FormField label="Mother's Occupation" field="motherOccupation" placeholder="e.g., Homemaker" value={formData.motherOccupation} onChange={updateField} />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <FormField label="Brothers" field="brothers" placeholder="e.g., 1 (Married)" />
-                      <FormField label="Sisters" field="sisters" placeholder="e.g., 2 (1 Married)" />
+                      <FormField label="Brothers" field="brothers" placeholder="e.g., 1 (Married)" value={formData.brothers} onChange={updateField} />
+                      <FormField label="Sisters" field="sisters" placeholder="e.g., 2 (1 Married)" value={formData.sisters} onChange={updateField} />
                     </div>
-                    <FormSelect label="Family Type" field="familyType" options={FAMILY_TYPE_OPTIONS} placeholder="Select" />
+                    <FormSelectField label="Family Type" field="familyType" options={FAMILY_TYPE_OPTIONS} placeholder="Select" value={formData.familyType} onChange={updateField} />
                   </TabsContent>
 
                   {/* About Tab */}
                   <TabsContent value="about" className="mt-0 space-y-4">
-                    <FormTextarea
+                    <FormTextareaField
                       label="About Me"
                       field="aboutMe"
                       placeholder="Write a brief description about yourself, your values, and what makes you unique..."
                       rows={4}
+                      value={formData.aboutMe}
+                      onChange={updateField}
                     />
-                    <FormField label="Hobbies & Interests" field="hobbies" placeholder="e.g., Reading, Traveling, Cooking (comma separated)" />
+                    <FormField label="Hobbies & Interests" field="hobbies" placeholder="e.g., Reading, Traveling, Cooking (comma separated)" value={formData.hobbies} onChange={updateField} />
                     <Separator className="bg-gold/10" />
                     <p className="text-sm font-semibold" style={{ color: '#8B1A1A' }}>Partner Preferences</p>
                     <div className="grid grid-cols-2 gap-3">
-                      <FormField label="Preferred Age" field="partnerAge" placeholder="e.g., 23-27" />
-                      <FormField label="Preferred Height" field="partnerHeight" placeholder="e.g., 5ft 2in - 5ft 6in" />
+                      <FormField label="Preferred Age" field="partnerAge" placeholder="e.g., 23-27" value={formData.partnerAge} onChange={updateField} />
+                      <FormField label="Preferred Height" field="partnerHeight" placeholder="e.g., 5ft 2in - 5ft 6in" value={formData.partnerHeight} onChange={updateField} />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <FormField label="Preferred Education" field="partnerEducation" placeholder="e.g., Graduate" />
-                      <FormField label="Preferred Occupation" field="partnerOccupation" placeholder="e.g., Any" />
+                      <FormField label="Preferred Education" field="partnerEducation" placeholder="e.g., Graduate" value={formData.partnerEducation} onChange={updateField} />
+                      <FormField label="Preferred Occupation" field="partnerOccupation" placeholder="e.g., Any" value={formData.partnerOccupation} onChange={updateField} />
                     </div>
-                    <FormTextarea
+                    <FormTextareaField
                       label="Other Preferences"
                       field="partnerPreferences"
                       placeholder="Any other preferences or expectations..."
                       rows={3}
+                      value={formData.partnerPreferences}
+                      onChange={updateField}
                     />
                   </TabsContent>
 
@@ -873,8 +912,8 @@ export default function Home() {
                       <Label className="text-sm font-medium text-foreground">Profile Photo</Label>
                       <div className="flex items-center gap-4">
                         <div
-                          className="w-24 h-32 rounded-lg border-2 border-dashed border-gold/40 flex items-center justify-center overflow-hidden cursor-pointer hover:border-gold transition-colors"
-                          style={{ background: '#FBF5E6' }}
+                          className="w-24 h-32 rounded-lg border-2 border-dashed flex items-center justify-center overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
+                          style={{ borderColor: '#D4AF3766', background: '#FBF5E6' }}
                           onClick={() => fileInputRef.current?.click()}
                         >
                           {formData.photo ? (
@@ -890,7 +929,8 @@ export default function Home() {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="w-full border-gold/30 text-maroon hover:bg-gold/5"
+                            className="w-full"
+                            style={{ borderColor: '#D4AF3744', color: '#8B1A1A' }}
                             onClick={() => fileInputRef.current?.click()}
                           >
                             <Camera size={14} className="mr-2" />
@@ -919,22 +959,25 @@ export default function Home() {
 
                     <Separator className="bg-gold/10" />
 
-                    <FormField label="Contact Number" field="contactNumber" placeholder="e.g., +91 98765 43210" />
-                    <FormField label="Email Address" field="email" placeholder="e.g., name@email.com" type="email" />
-                    <FormTextarea
+                    <FormField label="Contact Number" field="contactNumber" placeholder="e.g., +91 98765 43210" value={formData.contactNumber} onChange={updateField} />
+                    <FormField label="Email Address" field="email" placeholder="e.g., name@email.com" type="email" value={formData.email} onChange={updateField} />
+                    <FormTextareaField
                       label="Address"
                       field="address"
                       placeholder="Your residential address..."
                       rows={3}
+                      value={formData.address}
+                      onChange={updateField}
                     />
                   </TabsContent>
                 </div>
               </Tabs>
 
               {/* Action Buttons */}
-              <div className="p-4 border-t border-gold/10 bg-secondary/30 space-y-2">
+              <div className="p-4 border-t space-y-2" style={{ borderColor: '#E8D48B33', background: '#FDFAF0' }}>
                 <Button
-                  className="w-full bg-maroon hover:bg-maroon-dark text-white font-semibold h-11"
+                  className="w-full font-semibold h-11 text-white"
+                  style={{ backgroundColor: '#8B1A1A' }}
                   onClick={downloadPDF}
                   disabled={isGeneratingPDF}
                 >
@@ -944,14 +987,15 @@ export default function Home() {
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
-                    className="flex-1 border-gold/30 text-maroon hover:bg-gold/5"
+                    className="flex-1"
+                    style={{ borderColor: '#D4AF3744', color: '#8B1A1A' }}
                     onClick={handlePrint}
                   >
                     <Printer size={14} className="mr-1" /> Print
                   </Button>
                   <Button
                     variant="outline"
-                    className="flex-1 border-gold/30 text-green-700 hover:bg-green-50"
+                    className="flex-1 text-green-700 hover:bg-green-50"
                     onClick={shareWhatsApp}
                   >
                     <Share2 size={14} className="mr-1" /> WhatsApp
@@ -972,14 +1016,12 @@ export default function Home() {
                   <Sparkles size={10} className="mr-1" /> Updates Instantly
                 </Badge>
               </div>
-              <div className="bg-gray-100/50 rounded-xl p-4 border border-gold/10">
+              <div className="rounded-xl p-4 border" style={{ borderColor: '#D4AF3722', background: '#F5F0E6' }}>
                 <div
                   className="overflow-auto rounded-lg shadow-lg"
                   style={{ maxHeight: 'calc(100vh - 150px)' }}
                 >
-                  <div style={{ transform: 'scale(1)', transformOrigin: 'top left', width: '595px' }}>
-                    <BiodataTemplate formData={formData} />
-                  </div>
+                  <BiodataTemplate formData={formData} />
                 </div>
               </div>
 
@@ -987,7 +1029,8 @@ export default function Home() {
               {showMobilePreview && (
                 <div className="lg:hidden mt-4 space-y-2">
                   <Button
-                    className="w-full bg-maroon hover:bg-maroon-dark text-white font-semibold h-11"
+                    className="w-full font-semibold h-11 text-white"
+                    style={{ backgroundColor: '#8B1A1A' }}
                     onClick={downloadPDF}
                     disabled={isGeneratingPDF}
                   >
@@ -995,18 +1038,10 @@ export default function Home() {
                     {isGeneratingPDF ? 'Generating PDF...' : 'Download PDF'}
                   </Button>
                   <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      className="flex-1"
-                      onClick={handlePrint}
-                    >
+                    <Button variant="outline" className="flex-1" onClick={handlePrint}>
                       <Printer size={14} className="mr-1" /> Print
                     </Button>
-                    <Button
-                      variant="outline"
-                      className="flex-1 text-green-700"
-                      onClick={shareWhatsApp}
-                    >
+                    <Button variant="outline" className="flex-1 text-green-700" onClick={shareWhatsApp}>
                       <Share2 size={14} className="mr-1" /> WhatsApp
                     </Button>
                   </div>
