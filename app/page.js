@@ -7,14 +7,17 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
+import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
+import Cropper from 'react-easy-crop';
 import {
   Download, Eye, Edit3, User, GraduationCap, Users, Heart, Phone,
   Camera, Trash2, RotateCcw, FileText, Printer, Share2, ImagePlus,
-  Sparkles, Save, Plus, X
+  Sparkles, Save, Plus, X, Pencil, CheckCircle2, Maximize
 } from 'lucide-react';
 
 // ============================================================
@@ -350,21 +353,23 @@ const BiodataPage1 = ({ formData }) => {
                         letterSpacing: '0.15em',
                         textTransform: 'uppercase',
                         color: '#8B1A1A',
-                        marginBottom: '5px',
+                        marginBottom: '4px',
                       }}>Interests</p>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                         {formData.hobbies.split(',').map((hobby, i) => (
                           <span
                             key={i}
                             style={{
-                              fontSize: '9px',
+                              fontSize: '8px',
                               fontWeight: 600,
-                              padding: '3px 10px',
-                              borderRadius: '12px',
-                              backgroundColor: '#8B1A1A',
-                              color: '#FFFEF7',
+                              padding: '2px 8px',
+                              borderRadius: '10px',
+                              border: '1px solid #8B1A1A',
+                              color: '#8B1A1A',
+                              backgroundColor: '#FFF5F5',
                               whiteSpace: 'nowrap',
                               letterSpacing: '0.02em',
+                              lineHeight: '14px',
                             }}
                           >
                             {hobby.trim()}
@@ -460,22 +465,25 @@ const BiodataPage2 = ({ formData }) => {
         display: 'grid',
         gridTemplateColumns: '1fr 1fr',
         gridTemplateRows: '1fr 1fr',
-        gap: '20px',
-        padding: '10px',
+        gap: '16px',
+        padding: '8px',
       }}>
         {photos.map((photo, i) => (
           <div key={i} style={{
             overflow: 'hidden',
-            borderRadius: '4px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+            borderRadius: '6px',
+            backgroundColor: '#FFFFFF',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}>
             <img
               src={photo}
               alt={`Photo ${i + 1}`}
               style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
+                maxWidth: '100%',
+                maxHeight: '100%',
+                objectFit: 'contain',
                 display: 'block',
               }}
             />
@@ -496,6 +504,12 @@ export default function Home() {
   const [showMobilePreview, setShowMobilePreview] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [autoSaved, setAutoSaved] = useState(false);
+  const [cropImageSrc, setCropImageSrc] = useState(null);
+  const [showCropModal, setShowCropModal] = useState(false);
+  const [cropState, setCropState] = useState({ x: 0, y: 0 });
+  const [cropZoom, setCropZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [editingPhotoIndex, setEditingPhotoIndex] = useState(null);
   const fileInputRef = useRef(null);
 
   // Load from localStorage on mount
@@ -530,45 +544,120 @@ export default function Home() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   }, []);
 
-  // Handle multiple photo upload
-  const handlePhotoUpload = async (e) => {
-    const files = Array.from(e.target.files || []);
-    if (!files.length) return;
+  // Handle photo upload - opens crop modal
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
     const currentCount = (formData.photos || []).length;
-    const maxNew = 4 - currentCount;
-
-    if (files.length > maxNew) {
-      toast.error(`You can add only ${maxNew} more photo${maxNew === 1 ? '' : 's'} (max 4)`);
-    }
-
-    const filesToProcess = files.slice(0, maxNew);
-    if (filesToProcess.length === 0) {
+    if (currentCount >= 4) {
       toast.error('Maximum 4 photos allowed');
       e.target.value = '';
       return;
     }
 
-    toast.loading('Processing photos...');
-
-    try {
-      const newPhotos = await Promise.all(
-        filesToProcess.map((file) => resizeImage(file, 1200))
-      );
-
-      setFormData((prev) => ({
-        ...prev,
-        photos: [...(prev.photos || []), ...newPhotos],
-      }));
-
-      toast.dismiss();
-      toast.success(`${newPhotos.length} photo${newPhotos.length > 1 ? 's' : ''} added!`);
-    } catch (err) {
-      toast.dismiss();
-      toast.error('Failed to process photos');
+    if (file.size > 15 * 1024 * 1024) {
+      toast.error('Image size should be less than 15MB');
+      e.target.value = '';
+      return;
     }
 
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setCropImageSrc(reader.result);
+      setEditingPhotoIndex(null);
+      setCropState({ x: 0, y: 0 });
+      setCropZoom(1);
+      setShowCropModal(true);
+    };
+    reader.readAsDataURL(file);
     e.target.value = '';
+  };
+
+  // Edit existing photo
+  const editPhoto = (index) => {
+    const photo = formData.photos[index];
+    setCropImageSrc(photo);
+    setEditingPhotoIndex(index);
+    setCropState({ x: 0, y: 0 });
+    setCropZoom(1);
+    setShowCropModal(true);
+  };
+
+  // Handle crop complete callback
+  const onCropComplete = useCallback((croppedArea, croppedAreaPx) => {
+    setCroppedAreaPixels(croppedAreaPx);
+  }, []);
+
+  // Save cropped image
+  const saveCroppedPhoto = async () => {
+    try {
+      const croppedImage = await getCroppedImg(cropImageSrc, croppedAreaPixels);
+      if (editingPhotoIndex !== null) {
+        // Editing existing photo
+        setFormData((prev) => {
+          const newPhotos = [...(prev.photos || [])];
+          newPhotos[editingPhotoIndex] = croppedImage;
+          return { ...prev, photos: newPhotos };
+        });
+        toast.success('Photo updated!');
+      } else {
+        // Adding new photo
+        setFormData((prev) => ({
+          ...prev,
+          photos: [...(prev.photos || []), croppedImage],
+        }));
+        toast.success('Photo added!');
+      }
+      setShowCropModal(false);
+      setCropImageSrc(null);
+    } catch (err) {
+      toast.error('Failed to process image');
+    }
+  };
+
+  // Use full image without cropping
+  const useFullImage = async () => {
+    try {
+      // Resize the full image
+      const img = await createImage(cropImageSrc);
+      const maxDim = 1200;
+      let { width, height } = img;
+      if (width > maxDim || height > maxDim) {
+        if (width > height) {
+          height = (height / width) * maxDim;
+          width = maxDim;
+        } else {
+          width = (width / height) * maxDim;
+          height = maxDim;
+        }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      const fullImage = canvas.toDataURL('image/jpeg', 0.92);
+
+      if (editingPhotoIndex !== null) {
+        setFormData((prev) => {
+          const newPhotos = [...(prev.photos || [])];
+          newPhotos[editingPhotoIndex] = fullImage;
+          return { ...prev, photos: newPhotos };
+        });
+        toast.success('Photo updated!');
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          photos: [...(prev.photos || []), fullImage],
+        }));
+        toast.success('Photo added!');
+      }
+      setShowCropModal(false);
+      setCropImageSrc(null);
+    } catch (err) {
+      toast.error('Failed to process image');
+    }
   };
 
   // Remove a photo
@@ -840,26 +929,34 @@ export default function Home() {
                             style={{ borderColor: '#D4AF3744', color: '#8B1A1A' }}
                             onClick={() => fileInputRef.current?.click()}
                           >
-                            <Plus size={14} className="mr-1" /> Add Photos
+                            <Plus size={14} className="mr-1" /> Add Photo
                           </Button>
                         )}
                       </div>
 
                       <p className="text-xs text-muted-foreground">
-                        Upload up to 4 photos for your biodata. These will appear on page 2 of your PDF.
+                        Upload up to 4 photos. You can adjust each photo&apos;s crop and zoom before adding.
                       </p>
 
                       {/* Photo Grid */}
                       <div className="grid grid-cols-2 gap-3">
                         {(formData.photos || []).map((photo, i) => (
                           <div key={i} className="relative group rounded-lg overflow-hidden border" style={{ borderColor: '#D4AF3744', aspectRatio: '3/4' }}>
-                            <img src={photo} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
-                            <button
-                              onClick={() => removePhoto(i)}
-                              className="absolute top-2 right-2 w-7 h-7 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
-                            >
-                              <X size={14} />
-                            </button>
+                            <img src={photo} alt={`Photo ${i + 1}`} className="w-full h-full object-contain bg-gray-50" />
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
+                              <button
+                                onClick={() => editPhoto(i)}
+                                className="w-8 h-8 rounded-full bg-white text-gray-700 flex items-center justify-center shadow-lg hover:bg-blue-50"
+                              >
+                                <Pencil size={14} />
+                              </button>
+                              <button
+                                onClick={() => removePhoto(i)}
+                                className="w-8 h-8 rounded-full bg-white text-red-500 flex items-center justify-center shadow-lg hover:bg-red-50"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
                             <div className="absolute bottom-0 left-0 right-0 bg-black/40 text-white text-[10px] text-center py-1">
                               Photo {i + 1}
                             </div>
@@ -883,7 +980,6 @@ export default function Home() {
                         ref={fileInputRef}
                         type="file"
                         accept="image/*"
-                        multiple
                         className="hidden"
                         onChange={handlePhotoUpload}
                       />
@@ -1003,6 +1099,69 @@ export default function Home() {
           </p>
         </div>
       </footer>
+
+      {/* Photo Crop/Adjust Modal */}
+      <Dialog open={showCropModal} onOpenChange={(open) => {
+        if (!open) {
+          setShowCropModal(false);
+          setCropImageSrc(null);
+        }
+      }}>
+        <DialogContent className="sm:max-w-[540px] p-0 overflow-hidden">
+          <DialogHeader className="px-6 pt-5 pb-2">
+            <DialogTitle className="font-playfair" style={{ color: '#8B1A1A' }}>
+              {editingPhotoIndex !== null ? 'Adjust Photo' : 'Adjust Your Photo'}
+            </DialogTitle>
+            <p className="text-xs text-muted-foreground mt-1">
+              Drag to reposition, use slider to zoom. Choose &quot;Use Full Image&quot; to keep the original.
+            </p>
+          </DialogHeader>
+          {cropImageSrc && (
+            <>
+              <div className="relative h-[380px] bg-gray-900">
+                <Cropper
+                  image={cropImageSrc}
+                  crop={cropState}
+                  zoom={cropZoom}
+                  aspect={3 / 4}
+                  onCropChange={setCropState}
+                  onZoomChange={setCropZoom}
+                  onCropComplete={onCropComplete}
+                  objectFit="contain"
+                />
+              </div>
+              <div className="px-6 py-3">
+                <Label className="text-xs text-muted-foreground mb-1 block">Zoom</Label>
+                <Slider
+                  value={[cropZoom]}
+                  min={0.5}
+                  max={3}
+                  step={0.05}
+                  onValueChange={(v) => setCropZoom(v[0])}
+                  className="my-2"
+                />
+              </div>
+              <div className="flex justify-between gap-3 px-6 pb-5">
+                <Button
+                  variant="outline"
+                  onClick={useFullImage}
+                  className="text-xs"
+                >
+                  <Maximize size={14} className="mr-1.5" /> Use Full Image
+                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => { setShowCropModal(false); setCropImageSrc(null); }}>
+                    Cancel
+                  </Button>
+                  <Button onClick={saveCroppedPhoto} className="text-white" style={{ backgroundColor: '#8B1A1A' }}>
+                    <CheckCircle2 size={14} className="mr-1.5" /> Apply
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
