@@ -62,6 +62,7 @@ const DEFAULT_FORM_DATA = {
   sisters: '',
   familyType: '',
   aboutMe: '',
+  hobbies: '',
   contactNumber: '',
   email: '',
   address: '',
@@ -260,7 +261,7 @@ const BiodataPage1 = ({ formData }) => {
           <div style={{ position: 'absolute', bottom: '6px', right: '6px', width: '16px', height: '16px', borderBottom: '2px solid #8B1A1A', borderRight: '2px solid #8B1A1A' }} />
 
           {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: '4px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '6px' }}>
             <p style={{ fontSize: '12px', marginBottom: '2px', color: '#D4AF37', fontFamily: 'Georgia, serif' }}>
               || &#2358;&#2381;&#2352;&#2368; &#2327;&#2339;&#2375;&#2358;&#2366;&#2351; &#2344;&#2350;&#2307; ||
             </p>
@@ -269,26 +270,30 @@ const BiodataPage1 = ({ formData }) => {
               fontSize: '22px',
               fontWeight: 700,
               letterSpacing: '0.08em',
-              margin: '6px 0 4px',
+              margin: '6px 0 2px',
               color: '#8B1A1A',
               fontFamily: 'var(--font-playfair), Georgia, serif',
             }}>
               {formData.fullName || 'Your Full Name'}
             </h1>
+            {formData.aboutMe && (
+              <p style={{
+                fontSize: '11px',
+                lineHeight: 1.6,
+                color: '#4A3F2F',
+                fontStyle: 'italic',
+                maxWidth: '460px',
+                margin: '6px auto 2px',
+                padding: '0 8px',
+              }}>
+                {formData.aboutMe}
+              </p>
+            )}
             <OrnamentalDivider />
           </div>
 
           {/* Content area - flex grow */}
           <div style={{ flex: 1 }}>
-            {/* About Me - Full Width */}
-            {formData.aboutMe && (
-              <>
-                <SectionTitle title="About Me" />
-                <p style={{ fontSize: '11px', lineHeight: 1.6, color: '#2D2418', margin: '0 0 4px' }}>
-                  {formData.aboutMe}
-                </p>
-              </>
-            )}
 
             {/* Two Column: Personal Details + Education & Career */}
             {(hasPersonalDetails || hasCareerDetails) && (
@@ -334,6 +339,39 @@ const BiodataPage1 = ({ formData }) => {
                         </tbody>
                       </table>
                     </>
+                  )}
+
+                  {/* Interests Pills */}
+                  {formData.hobbies && (
+                    <div style={{ marginTop: '8px' }}>
+                      <p style={{
+                        fontSize: '9px',
+                        fontWeight: 700,
+                        letterSpacing: '0.15em',
+                        textTransform: 'uppercase',
+                        color: '#8B1A1A',
+                        marginBottom: '5px',
+                      }}>Interests</p>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                        {formData.hobbies.split(',').map((hobby, i) => (
+                          <span
+                            key={i}
+                            style={{
+                              fontSize: '9px',
+                              fontWeight: 600,
+                              padding: '3px 10px',
+                              borderRadius: '12px',
+                              backgroundColor: '#8B1A1A',
+                              color: '#FFFEF7',
+                              whiteSpace: 'nowrap',
+                              letterSpacing: '0.02em',
+                            }}
+                          >
+                            {hobby.trim()}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
@@ -408,101 +446,41 @@ const BiodataPage2 = ({ formData }) => {
       style={{
         width: '595px',
         height: '842px',
-        backgroundColor: '#FFFEF7',
+        backgroundColor: '#FFFFFF',
         fontFamily: 'Georgia, "Times New Roman", serif',
-        padding: '10px',
+        padding: '32px',
         boxSizing: 'border-box',
-        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
+      {/* Photo Grid: 2x2 */}
       <div style={{
-        border: '2px solid #D4AF37',
-        padding: '3px',
-        height: '100%',
-        boxSizing: 'border-box',
-        position: 'relative',
+        flex: 1,
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gridTemplateRows: '1fr 1fr',
+        gap: '20px',
+        padding: '10px',
       }}>
-        <div style={{
-          border: '1px solid #D4AF37',
-          padding: '16px 20px',
-          height: '100%',
-          boxSizing: 'border-box',
-          display: 'flex',
-          flexDirection: 'column',
-        }}>
-          {/* Corner decorations */}
-          <div style={{ position: 'absolute', top: '6px', left: '6px', width: '16px', height: '16px', borderTop: '2px solid #8B1A1A', borderLeft: '2px solid #8B1A1A' }} />
-          <div style={{ position: 'absolute', top: '6px', right: '6px', width: '16px', height: '16px', borderTop: '2px solid #8B1A1A', borderRight: '2px solid #8B1A1A' }} />
-          <div style={{ position: 'absolute', bottom: '6px', left: '6px', width: '16px', height: '16px', borderBottom: '2px solid #8B1A1A', borderLeft: '2px solid #8B1A1A' }} />
-          <div style={{ position: 'absolute', bottom: '6px', right: '6px', width: '16px', height: '16px', borderBottom: '2px solid #8B1A1A', borderRight: '2px solid #8B1A1A' }} />
-
-          {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: '8px' }}>
-            <p style={{ fontSize: '12px', marginBottom: '2px', color: '#D4AF37', fontFamily: 'Georgia, serif' }}>
-              || &#2358;&#2381;&#2352;&#2368; &#2327;&#2339;&#2375;&#2358;&#2366;&#2351; &#2344;&#2350;&#2307; ||
-            </p>
-            <OrnamentalDivider />
-            <h1 style={{
-              fontSize: '22px',
-              fontWeight: 700,
-              letterSpacing: '0.08em',
-              margin: '6px 0 4px',
-              color: '#8B1A1A',
-              fontFamily: 'var(--font-playfair), Georgia, serif',
-            }}>
-              {formData.fullName || 'Your Full Name'}
-            </h1>
-            <OrnamentalDivider />
-          </div>
-
-          {/* Photo Grid */}
-          <div style={{
-            flex: 1,
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '12px',
-            justifyContent: 'center',
-            alignContent: 'center',
-            padding: '8px',
+        {photos.map((photo, i) => (
+          <div key={i} style={{
+            overflow: 'hidden',
+            borderRadius: '4px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
           }}>
-            {photos.map((photo, i) => (
-              <div key={i} style={{
-                width: photos.length === 1 ? '380px' : '250px',
-                height: photos.length === 1 ? '480px' : photos.length <= 2 ? '420px' : '320px',
-                border: '3px solid #D4AF37',
-                padding: '3px',
-                backgroundColor: '#FFF',
-                flexShrink: 0,
-              }}>
-                <div style={{
-                  width: '100%',
-                  height: '100%',
-                  border: '1px solid #E8D48B',
-                  overflow: 'hidden',
-                }}>
-                  <img
-                    src={photo}
-                    alt={`Photo ${i + 1}`}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      display: 'block',
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
+            <img
+              src={photo}
+              alt={`Photo ${i + 1}`}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                display: 'block',
+              }}
+            />
           </div>
-
-          {/* Footer */}
-          <div style={{ marginTop: 'auto', paddingTop: '8px' }}>
-            <OrnamentalDivider />
-            <p style={{ textAlign: 'center', fontSize: '10px', marginTop: '4px', color: '#D4AF37' }}>
-              &#10022; &#10022; &#10022;
-            </p>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
@@ -805,6 +783,8 @@ export default function Home() {
                     <FormField label="Occupation" field="occupation" placeholder="e.g., Software Engineer" value={formData.occupation} onChange={updateField} />
                     <FormField label="Company / Organization" field="company" placeholder="e.g., Google India" value={formData.company} onChange={updateField} />
                     <FormField label="Work Location" field="workLocation" placeholder="e.g., Bengaluru" value={formData.workLocation} onChange={updateField} />
+                    <Separator className="bg-gold/10" />
+                    <FormField label="Interests / Hobbies" field="hobbies" placeholder="e.g., Reading, Traveling, Photography (comma separated)" value={formData.hobbies} onChange={updateField} />
                   </TabsContent>
 
                   {/* Family Tab */}
