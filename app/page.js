@@ -106,6 +106,49 @@ const resizeImage = (file, maxDim = 1200) => {
 };
 
 // ============================================================
+// HELPER: Create image from src (no crossOrigin for data URLs)
+// ============================================================
+
+const createImage = (url) =>
+  new Promise((resolve, reject) => {
+    const image = new Image();
+    image.addEventListener('load', () => resolve(image));
+    image.addEventListener('error', (error) => reject(error));
+    if (url && !url.startsWith('data:')) {
+      image.setAttribute('crossOrigin', 'anonymous');
+    }
+    image.src = url;
+  });
+
+// ============================================================
+// HELPER: Get cropped image from canvas
+// ============================================================
+
+const getCroppedImg = async (imageSrc, pixelCrop) => {
+  const image = await createImage(imageSrc);
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  canvas.width = pixelCrop.width;
+  canvas.height = pixelCrop.height;
+
+  ctx.drawImage(
+    image,
+    pixelCrop.x,
+    pixelCrop.y,
+    pixelCrop.width,
+    pixelCrop.height,
+    0,
+    0,
+    pixelCrop.width,
+    pixelCrop.height
+  );
+
+  return canvas.toDataURL('image/jpeg', 0.92);
+};
+
+
+// ============================================================
 // FORM COMPONENTS (outside Home to prevent re-mount on state change)
 // ============================================================
 
@@ -440,40 +483,43 @@ const BiodataPage2 = ({ formData }) => {
         height: '842px',
         backgroundColor: '#FFFFFF',
         fontFamily: 'Georgia, "Times New Roman", serif',
-        padding: '32px',
+        padding: '40px',
         boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',
+        justifyContent: 'center',
       }}
     >
-      {/* Photo Grid: 2x2 */}
+      {/* Photo Grid: 2x2 with generous spacing */}
       <div style={{
-        flex: 1,
         display: 'grid',
         gridTemplateColumns: '1fr 1fr',
         gridTemplateRows: '1fr 1fr',
-        gap: '16px',
-        padding: '8px',
+        gap: '24px',
+        width: '100%',
+        height: '100%',
+        maxHeight: '762px',
       }}>
-        {photos.map((photo, i) => (
+        {[0, 1, 2, 3].map((i) => (
           <div key={i} style={{
-            overflow: 'hidden',
-            borderRadius: '6px',
             backgroundColor: '#FFFFFF',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            overflow: 'hidden',
           }}>
-            <img
-              src={photo}
-              alt={`Photo ${i + 1}`}
-              style={{
-                maxWidth: '100%',
-                maxHeight: '100%',
-                objectFit: 'contain',
-                display: 'block',
-              }}
-            />
+            {photos[i] ? (
+              <img
+                src={photos[i]}
+                alt={`Photo ${i + 1}`}
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '100%',
+                  objectFit: 'contain',
+                  display: 'block',
+                }}
+              />
+            ) : null}
           </div>
         ))}
       </div>
