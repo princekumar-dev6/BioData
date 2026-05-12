@@ -344,7 +344,7 @@ const BiodataPage1 = ({ formData }) => {
                     </>
                   )}
 
-                  {/* Interests Pills */}
+                  {/* Interests */}
                   {formData.hobbies && (
                     <div style={{ marginTop: '8px' }}>
                       <p style={{
@@ -355,27 +355,14 @@ const BiodataPage1 = ({ formData }) => {
                         color: '#8B1A1A',
                         marginBottom: '4px',
                       }}>Interests</p>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                        {formData.hobbies.split(',').map((hobby, i) => (
-                          <span
-                            key={i}
-                            style={{
-                              fontSize: '8px',
-                              fontWeight: 600,
-                              padding: '2px 8px',
-                              borderRadius: '10px',
-                              border: '1px solid #8B1A1A',
-                              color: '#8B1A1A',
-                              backgroundColor: '#FFF5F5',
-                              whiteSpace: 'nowrap',
-                              letterSpacing: '0.02em',
-                              lineHeight: '14px',
-                            }}
-                          >
-                            {hobby.trim()}
-                          </span>
-                        ))}
-                      </div>
+                      <p style={{
+                        fontSize: '10px',
+                        color: '#2D2418',
+                        lineHeight: 1.6,
+                        fontStyle: 'italic',
+                      }}>
+                        {formData.hobbies.split(',').map(h => h.trim()).filter(Boolean).join('  |  ')}
+                      </p>
                     </div>
                   )}
                 </div>
