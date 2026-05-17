@@ -984,23 +984,6 @@ export default function Home() {
                   <Download size={16} className="mr-2" />
                   {isGeneratingPDF ? 'Generating PDF...' : 'Download PDF'}
                 </Button>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    className="flex-1"
-                    style={{ borderColor: '#D4AF3744', color: '#8B1A1A' }}
-                    onClick={handlePrint}
-                  >
-                    <Printer size={14} className="mr-1" /> Print
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="flex-1 text-green-700 hover:bg-green-50"
-                    onClick={shareWhatsApp}
-                  >
-                    <Share2 size={14} className="mr-1" /> WhatsApp
-                  </Button>
-                </div>
               </div>
             </div>
           </div>
