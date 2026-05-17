@@ -460,54 +460,75 @@ const BiodataPage1 = ({ formData }) => {
               </div>
             )}
 
-            {/* Two Column: Family Details + Contact */}
-            {(hasFamilyDetails || hasContact) && (
-              <div style={{ display: 'flex', gap: '16px' }}>
-                {/* Left: Family Details */}
-                <div style={{ flex: 1 }}>
-                  {hasFamilyDetails && (
-                    <>
-                      <SectionTitle title="Family Details" />
-                      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                        <tbody>
-                          <DetailRow label="Father's Name" value={formData.fatherName} />
-                          <DetailRow label="Father's Occ." value={formData.fatherOccupation} />
-                          <DetailRow label="Mother's Name" value={formData.motherName} />
-                          <DetailRow label="Mother's Occ." value={formData.motherOccupation} />
-                          <DetailRow label="Brothers" value={formData.brothers} />
-                          <DetailRow label="Sisters" value={formData.sisters} />
-                          <DetailRow label="Family Type" value={formData.familyType} />
-                        </tbody>
-                      </table>
-                    </>
-                  )}
-                </div>
-
-                {/* Right: Contact */}
-                <div style={{ flex: 1 }}>
-                  {hasContact && (
-                    <>
-                      <SectionTitle title="Contact Information" />
-                      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                        <tbody>
-                          <DetailRow label="Contact No." value={formData.contactNumber} />
-                          <DetailRow label="Email" value={formData.email} />
-                          <DetailRow label="Address" value={formData.address} />
-                        </tbody>
-                      </table>
-                    </>
-                  )}
-                </div>
+            {/* Family Details - full width */}
+            {hasFamilyDetails && (
+              <div>
+                <SectionTitle title="Family Details" />
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <tbody>
+                    <tr>
+                      <td style={{ verticalAlign: 'top', width: '50%', paddingRight: '16px' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                          <tbody>
+                            <DetailRow label="Father's Name" value={formData.fatherName} />
+                            <DetailRow label="Father's Occ." value={formData.fatherOccupation} />
+                            <DetailRow label="Mother's Name" value={formData.motherName} />
+                            <DetailRow label="Mother's Occ." value={formData.motherOccupation} />
+                          </tbody>
+                        </table>
+                      </td>
+                      <td style={{ verticalAlign: 'top', width: '50%' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                          <tbody>
+                            <DetailRow label="Brothers" value={formData.brothers} />
+                            <DetailRow label="Sisters" value={formData.sisters} />
+                            <DetailRow label="Family Type" value={formData.familyType} />
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             )}
           </div>
 
-          {/* Footer */}
-          <div style={{ marginTop: 'auto', paddingTop: '8px' }}>
-            <OrnamentalDivider />
-            <p style={{ textAlign: 'center', fontSize: '10px', marginTop: '4px', color: '#D4AF37' }}>
-              &#10022; &#10022; &#10022;
-            </p>
+          {/* Contact + Footer pushed to bottom */}
+          <div style={{ marginTop: 'auto' }}>
+            {hasContact && (
+              <div style={{ paddingTop: '4px' }}>
+                <SectionTitle title="Contact Information" />
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <tbody>
+                    <tr>
+                      <td style={{ verticalAlign: 'top', width: '50%', paddingRight: '16px' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                          <tbody>
+                            <DetailRow label="Contact No." value={formData.contactNumber} />
+                            <DetailRow label="Email" value={formData.email} />
+                          </tbody>
+                        </table>
+                      </td>
+                      <td style={{ verticalAlign: 'top', width: '50%' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                          <tbody>
+                            <DetailRow label="Address" value={formData.address} />
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* Footer */}
+            <div style={{ paddingTop: '8px' }}>
+              <OrnamentalDivider />
+              <p style={{ textAlign: 'center', fontSize: '10px', marginTop: '4px', color: '#D4AF37' }}>
+                &#10022; &#10022; &#10022;
+              </p>
+            </div>
           </div>
         </div>
       </div>
