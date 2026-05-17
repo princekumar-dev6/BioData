@@ -38,6 +38,7 @@ const DEFAULT_FORM_DATA = {
   fullName: '',
   gender: '',
   dateOfBirth: '',
+  placeOfBirth: '',
   age: '',
   height: '',
   weight: '',
@@ -54,6 +55,7 @@ const DEFAULT_FORM_DATA = {
   occupation: '',
   company: '',
   workLocation: '',
+  totalEXP: '',
   fatherName: '',
   fatherOccupation: '',
   motherName: '',
@@ -100,48 +102,6 @@ const resizeImage = (file, maxDim = 1600) => {
     };
     reader.readAsDataURL(file);
   });
-};
-
-// ============================================================
-// HELPER: Create image from src (no crossOrigin for data URLs)
-// ============================================================
-
-const createImage = (url) =>
-  new Promise((resolve, reject) => {
-    const image = new Image();
-    image.addEventListener('load', () => resolve(image));
-    image.addEventListener('error', (error) => reject(error));
-    if (url && !url.startsWith('data:')) {
-      image.setAttribute('crossOrigin', 'anonymous');
-    }
-    image.src = url;
-  });
-
-// ============================================================
-// HELPER: Get cropped image from canvas
-// ============================================================
-
-const getCroppedImg = async (imageSrc, pixelCrop) => {
-  const image = await createImage(imageSrc);
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-
-  canvas.width = pixelCrop.width;
-  canvas.height = pixelCrop.height;
-
-  ctx.drawImage(
-    image,
-    pixelCrop.x,
-    pixelCrop.y,
-    pixelCrop.width,
-    pixelCrop.height,
-    0,
-    0,
-    pixelCrop.width,
-    pixelCrop.height
-  );
-
-  return canvas.toDataURL('image/jpeg', 0.92);
 };
 
 // ============================================================
@@ -311,10 +271,10 @@ const DetailRow = ({ label, value }) => {
 const BiodataPage1 = ({ formData }) => {
   const hasPersonalDetails = formData.height || formData.weight || formData.complexion ||
     formData.bloodGroup || formData.religion || formData.caste ||
-    formData.motherTongue || formData.gotra || formData.subCaste || formData.dateOfBirth || formData.age;
+    formData.motherTongue || formData.gotra || formData.subCaste || formData.placeOfBirth || formData.dateOfBirth || formData.age;
 
   const hasCareerDetails = formData.education || formData.college || formData.occupation ||
-    formData.company || formData.workLocation;
+    formData.company || formData.totalEXP || formData.workLocation;
 
   const hasFamilyDetails = formData.fatherName || formData.motherName ||
     formData.brothers || formData.sisters || formData.familyType;
@@ -400,6 +360,7 @@ const BiodataPage1 = ({ formData }) => {
                       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <tbody>
                           <DetailRow label="Date of Birth" value={formData.dateOfBirth} />
+                          <DetailRow label="Place of Birth" value={formData.placeOfBirth} />
                           <DetailRow label="Age" value={formData.age ? `${formData.age} years` : ''} />
                           <DetailRow label="Gender" value={formData.gender} />
                           <DetailRow label="Height" value={formData.height} />
@@ -430,6 +391,7 @@ const BiodataPage1 = ({ formData }) => {
                           <DetailRow label="Occupation" value={formData.occupation} />
                           <DetailRow label="Company" value={formData.company} />
                           <DetailRow label="Work Location" value={formData.workLocation} />
+                          <DetailRow label="Total Work Experience" value={formData.totalEXP} />
                         </tbody>
                       </table>
                     </>
@@ -471,15 +433,9 @@ const BiodataPage1 = ({ formData }) => {
                         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                           <tbody>
                             <DetailRow label="Father's Name" value={formData.fatherName} />
-                            <DetailRow label="Father's Occ." value={formData.fatherOccupation} />
+                            <DetailRow label="Father's Occupation" value={formData.fatherOccupation} />
                             <DetailRow label="Mother's Name" value={formData.motherName} />
-                            <DetailRow label="Mother's Occ." value={formData.motherOccupation} />
-                          </tbody>
-                        </table>
-                      </td>
-                      <td style={{ verticalAlign: 'top', width: '50%' }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                          <tbody>
+                            <DetailRow label="Mother's Occupation" value={formData.motherOccupation} />
                             <DetailRow label="Brothers" value={formData.brothers} />
                             <DetailRow label="Sisters" value={formData.sisters} />
                             <DetailRow label="Family Type" value={formData.familyType} />
@@ -491,11 +447,7 @@ const BiodataPage1 = ({ formData }) => {
                 </table>
               </div>
             )}
-          </div>
-
-          {/* Contact + Footer pushed to bottom */}
-          <div style={{ marginTop: 'auto' }}>
-            {hasContact && (
+             {hasContact && (
               <div style={{ paddingTop: '4px' }}>
                 <SectionTitle title="Contact Information" />
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -506,12 +458,6 @@ const BiodataPage1 = ({ formData }) => {
                           <tbody>
                             <DetailRow label="Contact No." value={formData.contactNumber} />
                             <DetailRow label="Email" value={formData.email} />
-                          </tbody>
-                        </table>
-                      </td>
-                      <td style={{ verticalAlign: 'top', width: '50%' }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                          <tbody>
                             <DetailRow label="Address" value={formData.address} />
                           </tbody>
                         </table>
@@ -525,9 +471,6 @@ const BiodataPage1 = ({ formData }) => {
             {/* Footer */}
             <div style={{ paddingTop: '8px' }}>
               <OrnamentalDivider />
-              <p style={{ textAlign: 'center', fontSize: '10px', marginTop: '4px', color: '#D4AF37' }}>
-                &#10022; &#10022; &#10022;
-              </p>
             </div>
           </div>
         </div>
@@ -849,6 +792,9 @@ export default function Home() {
                   {/* Personal Tab */}
                   <TabsContent value="personal" className="mt-0 space-y-4">
                     <FormField label="Full Name" field="fullName" placeholder="Enter your full name" value={formData.fullName} onChange={updateField} />
+                    <div>
+                      <FormField label="Place of Birth" field="placeOfBirth" placeholder="New Delhi" value={formData.placeOfBirth} onChange={updateField} />
+                    </div>
                     <div className="grid grid-cols-2 gap-3">
                       <FormSelectField label="Gender" field="gender" options={GENDER_OPTIONS} placeholder="Select" value={formData.gender} onChange={updateField} />
                       <FormField label="Date of Birth" field="dateOfBirth" placeholder="DD/MM/YYYY" value={formData.dateOfBirth} onChange={updateField} />
@@ -884,6 +830,7 @@ export default function Home() {
                     <FormField label="Occupation" field="occupation" placeholder="e.g., Software Engineer" value={formData.occupation} onChange={updateField} />
                     <FormField label="Company / Organization" field="company" placeholder="e.g., Google India" value={formData.company} onChange={updateField} />
                     <FormField label="Work Location" field="workLocation" placeholder="e.g., Bengaluru" value={formData.workLocation} onChange={updateField} />
+                    <FormField label="Work Work Experience" field="totalEXP" placeholder="e.g., 4" value={formData.totalEXP} onChange={updateField} />
                     <Separator className="bg-gold/10" />
                     <FormField label="Interests / Hobbies" field="hobbies" placeholder="e.g., Reading, Traveling, Photography (comma separated)" value={formData.hobbies} onChange={updateField} />
                   </TabsContent>
