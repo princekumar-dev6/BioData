@@ -7,17 +7,14 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
-import Cropper from 'react-easy-crop';
 import {
   Download, Eye, Edit3, User, GraduationCap, Users, Heart, Phone,
   Camera, Trash2, RotateCcw, FileText, Printer, Share2, ImagePlus,
-  Sparkles, Save, Plus, X, Pencil, CheckCircle2, Maximize
+  Sparkles, Save, Plus, X
 } from 'lucide-react';
 
 // ============================================================
@@ -76,7 +73,7 @@ const DEFAULT_FORM_DATA = {
 // HELPER: Resize image maintaining quality
 // ============================================================
 
-const resizeImage = (file, maxDim = 1200) => {
+const resizeImage = (file, maxDim = 1600) => {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -97,7 +94,7 @@ const resizeImage = (file, maxDim = 1200) => {
         canvas.height = height;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL('image/jpeg', 0.92));
+        resolve(canvas.toDataURL('image/jpeg', 0.97));
       };
       img.src = e.target.result;
     };
@@ -146,6 +143,58 @@ const getCroppedImg = async (imageSrc, pixelCrop) => {
 
   return canvas.toDataURL('image/jpeg', 0.92);
 };
+
+// ============================================================
+// SCALED PREVIEW WRAPPER (responsive scaling for mobile)
+// ============================================================
+
+const ScaledPreview = ({ children }) => {
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const updateScale = () => {
+      const templateWidth = 595;
+      const viewportWidth = window.innerWidth;
+      // On mobile/small screens, scale to fit viewport minus padding
+      if (viewportWidth < 660) {
+        const available = viewportWidth - 48; // 16px padding each side + 8px card padding each side
+        setScale(Math.max(available / templateWidth, 0.3));
+      } else {
+        setScale(1);
+      }
+    };
+
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, []);
+
+  const scaledHeight = Math.ceil(842 * scale);
+
+  return (
+    <div
+      style={{
+        width: `${Math.ceil(595 * scale)}px`,
+        height: `${scaledHeight}px`,
+        overflow: 'hidden',
+        position: 'relative',
+        margin: '0 auto',
+      }}
+    >
+      <div style={{
+        transform: `scale(${scale})`,
+        transformOrigin: 'top left',
+        width: '595px',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+      }}>
+        {children}
+      </div>
+    </div>
+  );
+};
+
 
 
 // ============================================================
@@ -335,7 +384,6 @@ const BiodataPage1 = ({ formData }) => {
                 {formData.aboutMe}
               </p>
             )}
-            <OrnamentalDivider />
           </div>
 
           {/* Content area - flex grow */}
@@ -537,12 +585,6 @@ export default function Home() {
   const [showMobilePreview, setShowMobilePreview] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [autoSaved, setAutoSaved] = useState(false);
-  const [cropImageSrc, setCropImageSrc] = useState(null);
-  const [showCropModal, setShowCropModal] = useState(false);
-  const [cropState, setCropState] = useState({ x: 0, y: 0 });
-  const [cropZoom, setCropZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-  const [editingPhotoIndex, setEditingPhotoIndex] = useState(null);
   const fileInputRef = useRef(null);
 
   // Load from localStorage on mount
@@ -577,8 +619,8 @@ export default function Home() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   }, []);
 
-  // Handle photo upload - opens crop modal
-  const handlePhotoUpload = (e) => {
+  // Handle photo upload - directly use full image (no crop modal)
+  const handlePhotoUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -595,102 +637,18 @@ export default function Home() {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setCropImageSrc(reader.result);
-      setEditingPhotoIndex(null);
-      setCropState({ x: 0, y: 0 });
-      setCropZoom(1);
-      setShowCropModal(true);
-    };
-    reader.readAsDataURL(file);
+    try {
+      const fullImage = await resizeImage(file, 1600);
+      setFormData((prev) => ({
+        ...prev,
+        photos: [...(prev.photos || []), fullImage],
+      }));
+      toast.success('Photo added!');
+    } catch (err) {
+      toast.error('Failed to process image');
+    }
+
     e.target.value = '';
-  };
-
-  // Edit existing photo
-  const editPhoto = (index) => {
-    const photo = formData.photos[index];
-    setCropImageSrc(photo);
-    setEditingPhotoIndex(index);
-    setCropState({ x: 0, y: 0 });
-    setCropZoom(1);
-    setShowCropModal(true);
-  };
-
-  // Handle crop complete callback
-  const onCropComplete = useCallback((croppedArea, croppedAreaPx) => {
-    setCroppedAreaPixels(croppedAreaPx);
-  }, []);
-
-  // Save cropped image
-  const saveCroppedPhoto = async () => {
-    try {
-      const croppedImage = await getCroppedImg(cropImageSrc, croppedAreaPixels);
-      if (editingPhotoIndex !== null) {
-        // Editing existing photo
-        setFormData((prev) => {
-          const newPhotos = [...(prev.photos || [])];
-          newPhotos[editingPhotoIndex] = croppedImage;
-          return { ...prev, photos: newPhotos };
-        });
-        toast.success('Photo updated!');
-      } else {
-        // Adding new photo
-        setFormData((prev) => ({
-          ...prev,
-          photos: [...(prev.photos || []), croppedImage],
-        }));
-        toast.success('Photo added!');
-      }
-      setShowCropModal(false);
-      setCropImageSrc(null);
-    } catch (err) {
-      toast.error('Failed to process image');
-    }
-  };
-
-  // Use full image without cropping
-  const useFullImage = async () => {
-    try {
-      // Resize the full image
-      const img = await createImage(cropImageSrc);
-      const maxDim = 1200;
-      let { width, height } = img;
-      if (width > maxDim || height > maxDim) {
-        if (width > height) {
-          height = (height / width) * maxDim;
-          width = maxDim;
-        } else {
-          width = (width / height) * maxDim;
-          height = maxDim;
-        }
-      }
-      const canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, width, height);
-      const fullImage = canvas.toDataURL('image/jpeg', 0.92);
-
-      if (editingPhotoIndex !== null) {
-        setFormData((prev) => {
-          const newPhotos = [...(prev.photos || [])];
-          newPhotos[editingPhotoIndex] = fullImage;
-          return { ...prev, photos: newPhotos };
-        });
-        toast.success('Photo updated!');
-      } else {
-        setFormData((prev) => ({
-          ...prev,
-          photos: [...(prev.photos || []), fullImage],
-        }));
-        toast.success('Photo added!');
-      }
-      setShowCropModal(false);
-      setCropImageSrc(null);
-    } catch (err) {
-      toast.error('Failed to process image');
-    }
   };
 
   // Remove a photo
@@ -734,14 +692,14 @@ export default function Home() {
       if (page2 && (formData.photos || []).length > 0) {
         pdf.addPage();
         const canvas2 = await html2canvas(page2, {
-          scale: 2,
+          scale: 3,
           useCORS: true,
           logging: false,
-          backgroundColor: '#FFFEF7',
+          backgroundColor: '#FFFFFF',
           allowTaint: true,
         });
-        const img2 = canvas2.toDataURL('image/jpeg', 0.95);
-        pdf.addImage(img2, 'JPEG', 0, 0, pageWidth, pageHeight);
+        const img2 = canvas2.toDataURL('image/png');
+        pdf.addImage(img2, 'PNG', 0, 0, pageWidth, pageHeight);
       }
 
       const name = formData.fullName || 'biodata';
@@ -976,13 +934,7 @@ export default function Home() {
                         {(formData.photos || []).map((photo, i) => (
                           <div key={i} className="relative group rounded-lg overflow-hidden border" style={{ borderColor: '#D4AF3744', aspectRatio: '3/4' }}>
                             <img src={photo} alt={`Photo ${i + 1}`} className="w-full h-full object-contain bg-gray-50" />
-                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
-                              <button
-                                onClick={() => editPhoto(i)}
-                                className="w-8 h-8 rounded-full bg-white text-gray-700 flex items-center justify-center shadow-lg hover:bg-blue-50"
-                              >
-                                <Pencil size={14} />
-                              </button>
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
                               <button
                                 onClick={() => removePhoto(i)}
                                 className="w-8 h-8 rounded-full bg-white text-red-500 flex items-center justify-center shadow-lg hover:bg-red-50"
@@ -1064,22 +1016,26 @@ export default function Home() {
                   <Sparkles size={10} className="mr-1" /> Updates Instantly
                 </Badge>
               </div>
-              <div className="rounded-xl p-4 border" style={{ borderColor: '#D4AF3722', background: '#F5F0E6' }}>
+              <div className="rounded-xl p-2 sm:p-4 border" style={{ borderColor: '#D4AF3722', background: '#F5F0E6' }}>
                 <div
                   className="overflow-auto rounded-lg shadow-lg space-y-4"
                   style={{ maxHeight: 'calc(100vh - 150px)' }}
                 >
-                  {/* Page 1: Information */}
+                  {/* Page 1: Information - scales to fit container on mobile */}
                   <div>
                     <p className="text-[10px] text-muted-foreground mb-1 font-medium">Page 1 — Information</p>
-                    <BiodataPage1 formData={formData} />
+                    <ScaledPreview>
+                      <BiodataPage1 formData={formData} />
+                    </ScaledPreview>
                   </div>
 
                   {/* Page 2: Photos */}
                   {(formData.photos || []).length > 0 && (
                     <div>
                       <p className="text-[10px] text-muted-foreground mb-1 font-medium">Page 2 — Photos</p>
-                      <BiodataPage2 formData={formData} />
+                      <ScaledPreview>
+                        <BiodataPage2 formData={formData} />
+                      </ScaledPreview>
                     </div>
                   )}
                 </div>
@@ -1133,68 +1089,6 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* Photo Crop/Adjust Modal */}
-      <Dialog open={showCropModal} onOpenChange={(open) => {
-        if (!open) {
-          setShowCropModal(false);
-          setCropImageSrc(null);
-        }
-      }}>
-        <DialogContent className="sm:max-w-[540px] p-0 overflow-hidden">
-          <DialogHeader className="px-6 pt-5 pb-2">
-            <DialogTitle className="font-playfair" style={{ color: '#8B1A1A' }}>
-              {editingPhotoIndex !== null ? 'Adjust Photo' : 'Adjust Your Photo'}
-            </DialogTitle>
-            <p className="text-xs text-muted-foreground mt-1">
-              Drag to reposition, use slider to zoom. Choose &quot;Use Full Image&quot; to keep the original.
-            </p>
-          </DialogHeader>
-          {cropImageSrc && (
-            <>
-              <div className="relative h-[380px] bg-gray-900">
-                <Cropper
-                  image={cropImageSrc}
-                  crop={cropState}
-                  zoom={cropZoom}
-                  aspect={3 / 4}
-                  onCropChange={setCropState}
-                  onZoomChange={setCropZoom}
-                  onCropComplete={onCropComplete}
-                  objectFit="contain"
-                />
-              </div>
-              <div className="px-6 py-3">
-                <Label className="text-xs text-muted-foreground mb-1 block">Zoom</Label>
-                <Slider
-                  value={[cropZoom]}
-                  min={0.5}
-                  max={3}
-                  step={0.05}
-                  onValueChange={(v) => setCropZoom(v[0])}
-                  className="my-2"
-                />
-              </div>
-              <div className="flex justify-between gap-3 px-6 pb-5">
-                <Button
-                  variant="outline"
-                  onClick={useFullImage}
-                  className="text-xs"
-                >
-                  <Maximize size={14} className="mr-1.5" /> Use Full Image
-                </Button>
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={() => { setShowCropModal(false); setCropImageSrc(null); }}>
-                    Cancel
-                  </Button>
-                  <Button onClick={saveCroppedPhoto} className="text-white" style={{ backgroundColor: '#8B1A1A' }}>
-                    <CheckCircle2 size={14} className="mr-1.5" /> Apply
-                  </Button>
-                </div>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

@@ -56,6 +56,11 @@
     outline-offset: 6px;
   }
 
+  .biodata-scale-wrapper {
+    width: 595px;
+    transform-origin: top left;
+  }
+
   .scrollbar-thin {
     scrollbar-width: thin;
     scrollbar-color: #D4AF37 transparent;
@@ -72,6 +77,14 @@
   .scrollbar-thin::-webkit-scrollbar-thumb {
     background-color: #D4AF37;
     border-radius: 3px;
+  }
+}
+
+/* Mobile responsive scaling for biodata preview */
+@media (max-width: 700px) {
+  .biodata-scale-wrapper {
+    width: 100%;
+    overflow: hidden;
   }
 }
 
