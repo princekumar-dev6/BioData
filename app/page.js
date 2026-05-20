@@ -21,6 +21,105 @@ import {
 // CONSTANTS
 // ============================================================
 
+const BIODATA_THEMES = {
+  classic: {
+    name: 'Classic Gold',
+    preview: 'linear-gradient(135deg, #C9A96E, #6B2D3A)',
+    bg: '#FDFBF7',
+    border: '#C9A96E',
+    borderInner: '#E8D5B0',
+    corner: '#6B2D3A',
+    accent: '#C9A96E',
+    heading: '#6B2D3A',
+    name: '#6B2D3A',
+    label: '#7A6B5A',
+    value: '#1F1A14',
+    colon: '#C9A96E',
+    subtext: '#5A4E40',
+    dividerSymbol: '◆',
+  },
+  royal: {
+    name: 'Royal Navy',
+    preview: 'linear-gradient(135deg, #1E3A5F, #B8860B)',
+    bg: '#F8FAFC',
+    border: '#1E3A5F',
+    borderInner: '#CBD5E1',
+    corner: '#B8860B',
+    accent: '#B8860B',
+    heading: '#1E3A5F',
+    name: '#1E3A5F',
+    label: '#64748B',
+    value: '#0F172A',
+    colon: '#B8860B',
+    subtext: '#475569',
+    dividerSymbol: '❖',
+  },
+  rose: {
+    name: 'Rose Elegance',
+    preview: 'linear-gradient(135deg, #BE185D, #4A7C59)',
+    bg: '#FFF9FB',
+    border: '#E8A0BF',
+    borderInner: '#F5D5E0',
+    corner: '#BE185D',
+    accent: '#BE185D',
+    heading: '#831843',
+    name: '#831843',
+    label: '#9D7A8A',
+    value: '#1C1017',
+    colon: '#BE185D',
+    subtext: '#6B4555',
+    dividerSymbol: '✿',
+  },
+  midnight: {
+    name: 'Midnight Purple',
+    preview: 'linear-gradient(135deg, #312E81, #A78BFA)',
+    bg: '#FAFAFF',
+    border: '#6366F1',
+    borderInner: '#C7D2FE',
+    corner: '#4F46E5',
+    accent: '#6366F1',
+    heading: '#312E81',
+    name: '#312E81',
+    label: '#6B7280',
+    value: '#111827',
+    colon: '#6366F1',
+    subtext: '#4B5563',
+    dividerSymbol: '◈',
+  },
+  emerald: {
+    name: 'Emerald Charm',
+    preview: 'linear-gradient(135deg, #065F46, #D97706)',
+    bg: '#F7FDFA',
+    border: '#059669',
+    borderInner: '#A7F3D0',
+    corner: '#D97706',
+    accent: '#059669',
+    heading: '#065F46',
+    name: '#065F46',
+    label: '#6B7280',
+    value: '#111827',
+    colon: '#059669',
+    subtext: '#4B5563',
+    dividerSymbol: '❧',
+  },
+  sunset: {
+    name: 'Sunset Warm',
+    preview: 'linear-gradient(135deg, #9A3412, #D97706)',
+    bg: '#FFFBF5',
+    border: '#D97706',
+    borderInner: '#FDE68A',
+    corner: '#9A3412',
+    accent: '#D97706',
+    heading: '#9A3412',
+    name: '#9A3412',
+    label: '#78716C',
+    value: '#1C1917',
+    colon: '#D97706',
+    subtext: '#57534E',
+    dividerSymbol: '✦',
+  },
+};
+
 const HEIGHT_OPTIONS = [
   "4'0\"", "4'1\"", "4'2\"", "4'3\"", "4'4\"", "4'5\"", "4'6\"", "4'7\"", "4'8\"", "4'9\"", "4'10\"", "4'11\"",
   "5'0\"", "5'1\"", "5'2\"", "5'3\"", "5'4\"", "5'5\"", "5'6\"", "5'7\"", "5'8\"", "5'9\"", "5'10\"", "5'11\"",
@@ -33,6 +132,16 @@ const BLOOD_GROUP_OPTIONS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 const FAMILY_TYPE_OPTIONS = ['Joint Family', 'Nuclear Family'];
 const RELIGION_OPTIONS = ['Hindu', 'Muslim', 'Christian', 'Sikh', 'Buddhist', 'Jain', 'Other'];
 const GENDER_OPTIONS = ['Male', 'Female'];
+
+const DIVIDER_ICONS = [
+  { id: 'flower', symbol: '✿', label: 'Flower' },
+  { id: 'star', symbol: '✦', label: 'Star' },
+  { id: 'diamond', symbol: '◆', label: 'Diamond' },
+  { id: 'sparkle', symbol: '❖', label: 'Sparkle' },
+  { id: 'leaf', symbol: '❧', label: 'Leaf' },
+  { id: 'dot', symbol: '●', label: 'Dot' },
+  { id: 'none', symbol: '', label: 'None' },
+];
 
 const DEFAULT_FORM_DATA = {
   fullName: '',
@@ -210,55 +319,58 @@ const FormTextareaField = ({ label, field, placeholder, rows = 3, value, onChang
 // TEMPLATE COMPONENTS
 // ============================================================
 
-const OrnamentalDivider = () => (
-  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '6px 0' }}>
-    <div style={{ flex: 1, height: '1px', backgroundColor: '#D4AF37' }} />
-    <div style={{ margin: '0 10px', color: '#D4AF37', fontSize: '10px' }}>&#10022;</div>
-    <div style={{ flex: 1, height: '1px', backgroundColor: '#D4AF37' }} />
+const OrnamentalDivider = ({ theme, symbol }) => (
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '8px 0' }}>
+    <div style={{ flex: 1, height: '1px', background: `linear-gradient(to right, transparent, ${theme.accent}, transparent)` }} />
+    {symbol && <div style={{ margin: '0 12px', color: theme.accent, fontSize: '12px', lineHeight: 1 }}>{symbol}</div>}
+    <div style={{ flex: 1, height: '1px', background: `linear-gradient(to right, transparent, ${theme.accent}, transparent)` }} />
   </div>
 );
 
-const SectionTitle = ({ title }) => (
-  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '10px 0 6px' }}>
-    <div style={{ flex: 1, height: '1px', backgroundColor: '#D4AF37' }} />
+const SectionTitle = ({ title, theme }) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: '12px 0 8px' }}>
+    <div style={{ flex: 1, height: '1px', background: `linear-gradient(to right, transparent, ${theme.accent})` }} />
     <span style={{
-      fontSize: '9px',
+      fontSize: '9.5px',
       fontWeight: 700,
-      letterSpacing: '0.18em',
+      letterSpacing: '0.2em',
       textTransform: 'uppercase',
-      color: '#8B1A1A',
+      color: theme.heading,
       whiteSpace: 'nowrap',
+      fontFamily: 'var(--font-jakarta), "Segoe UI", sans-serif',
     }}>{title}</span>
-    <div style={{ flex: 1, height: '1px', backgroundColor: '#D4AF37' }} />
+    <div style={{ flex: 1, height: '1px', background: `linear-gradient(to left, transparent, ${theme.accent})` }} />
   </div>
 );
 
-const DetailRow = ({ label, value }) => {
+const DetailRow = ({ label, value, theme }) => {
   if (!value) return null;
   return (
     <tr>
       <td style={{
-        padding: '2px 0',
+        padding: '3px 0',
         fontSize: '11px',
         fontWeight: 500,
-        color: '#6B5B3E',
+        color: theme.label,
         whiteSpace: 'nowrap',
         verticalAlign: 'top',
+        fontFamily: 'var(--font-jakarta), "Segoe UI", sans-serif',
       }}>{label}</td>
       <td style={{
-        padding: '2px 6px',
+        padding: '3px 8px',
         fontSize: '11px',
-        color: '#D4AF37',
+        color: theme.colon,
         verticalAlign: 'top',
         width: '10px',
       }}>:</td>
       <td style={{
-        padding: '2px 0',
+        padding: '3px 0',
         fontSize: '11px',
         fontWeight: 600,
-        color: '#2D2418',
+        color: theme.value,
         verticalAlign: 'top',
         wordBreak: 'break-word',
+        fontFamily: 'var(--font-jakarta), "Segoe UI", sans-serif',
       }}>{value}</td>
     </tr>
   );
@@ -268,7 +380,7 @@ const DetailRow = ({ label, value }) => {
 // PAGE 1: INFORMATION TEMPLATE
 // ============================================================
 
-const BiodataPage1 = ({ formData }) => {
+const BiodataPage1 = ({ formData, theme, dividerSymbol }) => {
   const hasPersonalDetails = formData.height || formData.weight || formData.complexion ||
     formData.bloodGroup || formData.religion || formData.caste ||
     formData.motherTongue || formData.gotra || formData.subCaste || formData.placeOfBirth || formData.dateOfBirth || formData.age;
@@ -287,57 +399,59 @@ const BiodataPage1 = ({ formData }) => {
       style={{
         width: '595px',
         height: '842px',
-        backgroundColor: '#FFFEF7',
-        fontFamily: 'Georgia, "Times New Roman", serif',
-        padding: '10px',
+        backgroundColor: theme.bg,
+        fontFamily: 'var(--font-jakarta), "Segoe UI", sans-serif',
+        padding: '12px',
         boxSizing: 'border-box',
         overflow: 'hidden',
       }}
     >
       <div style={{
-        border: '2px solid #D4AF37',
-        padding: '3px',
+        border: `1.5px solid ${theme.border}`,
+        padding: '4px',
         height: '100%',
         boxSizing: 'border-box',
         position: 'relative',
+        borderRadius: '4px',
       }}>
         <div style={{
-          border: '1px solid #D4AF37',
-          padding: '16px 20px',
+          border: `0.5px solid ${theme.borderInner}`,
+          padding: '20px 24px',
           height: '100%',
           boxSizing: 'border-box',
           display: 'flex',
           flexDirection: 'column',
+          borderRadius: '2px',
         }}>
           {/* Corner decorations */}
-          <div style={{ position: 'absolute', top: '6px', left: '6px', width: '16px', height: '16px', borderTop: '2px solid #8B1A1A', borderLeft: '2px solid #8B1A1A' }} />
-          <div style={{ position: 'absolute', top: '6px', right: '6px', width: '16px', height: '16px', borderTop: '2px solid #8B1A1A', borderRight: '2px solid #8B1A1A' }} />
-          <div style={{ position: 'absolute', bottom: '6px', left: '6px', width: '16px', height: '16px', borderBottom: '2px solid #8B1A1A', borderLeft: '2px solid #8B1A1A' }} />
-          <div style={{ position: 'absolute', bottom: '6px', right: '6px', width: '16px', height: '16px', borderBottom: '2px solid #8B1A1A', borderRight: '2px solid #8B1A1A' }} />
+          <div style={{ position: 'absolute', top: '8px', left: '8px', width: '14px', height: '14px', borderTop: `2px solid ${theme.corner}`, borderLeft: `2px solid ${theme.corner}`, borderTopLeftRadius: '2px' }} />
+          <div style={{ position: 'absolute', top: '8px', right: '8px', width: '14px', height: '14px', borderTop: `2px solid ${theme.corner}`, borderRight: `2px solid ${theme.corner}`, borderTopRightRadius: '2px' }} />
+          <div style={{ position: 'absolute', bottom: '8px', left: '8px', width: '14px', height: '14px', borderBottom: `2px solid ${theme.corner}`, borderLeft: `2px solid ${theme.corner}`, borderBottomLeftRadius: '2px' }} />
+          <div style={{ position: 'absolute', bottom: '8px', right: '8px', width: '14px', height: '14px', borderBottom: `2px solid ${theme.corner}`, borderRight: `2px solid ${theme.corner}`, borderBottomRightRadius: '2px' }} />
 
           {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: '6px' }}>
-            <p style={{ fontSize: '12px', marginBottom: '2px', color: '#D4AF37', fontFamily: 'Georgia, serif' }}>
+          <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+            <p style={{ fontSize: '11px', marginBottom: '4px', color: theme.accent, fontFamily: 'Georgia, serif', letterSpacing: '0.05em' }}>
               || &#2358;&#2381;&#2352;&#2368; &#2327;&#2339;&#2375;&#2358;&#2366;&#2351; &#2344;&#2350;&#2307; ||
             </p>
-            <OrnamentalDivider />
+            <OrnamentalDivider theme={theme} symbol={dividerSymbol} />
             <h1 style={{
-              fontSize: '22px',
+              fontSize: '24px',
               fontWeight: 700,
-              letterSpacing: '0.08em',
-              margin: '6px 0 2px',
-              color: '#8B1A1A',
-              fontFamily: 'var(--font-playfair), Georgia, serif',
+              letterSpacing: '0.04em',
+              margin: '8px 0 4px',
+              color: theme.name,
+              fontFamily: 'var(--font-cormorant), Georgia, serif',
             }}>
               {formData.fullName || 'Your Full Name'}
             </h1>
             {formData.aboutMe && (
               <p style={{
-                fontSize: '11px',
-                lineHeight: 1.6,
-                color: '#4A3F2F',
+                fontSize: '10.5px',
+                lineHeight: 1.7,
+                color: theme.subtext,
                 fontStyle: 'italic',
-                maxWidth: '460px',
+                maxWidth: '440px',
                 margin: '6px auto 2px',
                 padding: '0 8px',
               }}>
@@ -356,23 +470,23 @@ const BiodataPage1 = ({ formData }) => {
                 <div style={{ flex: 1 }}>
                   {hasPersonalDetails && (
                     <>
-                      <SectionTitle title="Personal Details" />
+                      <SectionTitle title="Personal Details" theme={theme} />
                       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <tbody>
-                          <DetailRow label="Date of Birth" value={formData.dateOfBirth} />
-                          <DetailRow label="Place of Birth" value={formData.placeOfBirth} />
-                          <DetailRow label="Age" value={formData.age ? `${formData.age} years` : ''} />
-                          <DetailRow label="Gender" value={formData.gender} />
-                          <DetailRow label="Height" value={formData.height} />
-                          <DetailRow label="Weight" value={formData.weight ? `${formData.weight} kg` : ''} />
-                          <DetailRow label="Complexion" value={formData.complexion} />
-                          <DetailRow label="Blood Group" value={formData.bloodGroup} />
-                          <DetailRow label="Marital Status" value={formData.maritalStatus} />
-                          <DetailRow label="Religion" value={formData.religion} />
-                          <DetailRow label="Caste" value={formData.caste} />
-                          <DetailRow label="Sub-Caste" value={formData.subCaste} />
-                          <DetailRow label="Gotra" value={formData.gotra} />
-                          <DetailRow label="Mother Tongue" value={formData.motherTongue} />
+                          <DetailRow label="Date of Birth" value={formData.dateOfBirth} theme={theme} />
+                          <DetailRow label="Place of Birth" value={formData.placeOfBirth} theme={theme} />
+                          <DetailRow label="Age" value={formData.age ? `${formData.age} years` : ''} theme={theme} />
+                          <DetailRow label="Gender" value={formData.gender} theme={theme} />
+                          <DetailRow label="Height" value={formData.height} theme={theme} />
+                          <DetailRow label="Weight" value={formData.weight ? `${formData.weight} kg` : ''} theme={theme} />
+                          <DetailRow label="Complexion" value={formData.complexion} theme={theme} />
+                          <DetailRow label="Blood Group" value={formData.bloodGroup} theme={theme} />
+                          <DetailRow label="Marital Status" value={formData.maritalStatus} theme={theme} />
+                          <DetailRow label="Religion" value={formData.religion} theme={theme} />
+                          <DetailRow label="Caste" value={formData.caste} theme={theme} />
+                          <DetailRow label="Sub-Caste" value={formData.subCaste} theme={theme} />
+                          <DetailRow label="Gotra" value={formData.gotra} theme={theme} />
+                          <DetailRow label="Mother Tongue" value={formData.motherTongue} theme={theme} />
                         </tbody>
                       </table>
                     </>
@@ -383,15 +497,15 @@ const BiodataPage1 = ({ formData }) => {
                 <div style={{ flex: 1 }}>
                   {hasCareerDetails && (
                     <>
-                      <SectionTitle title="Education & Career" />
+                      <SectionTitle title="Education & Career" theme={theme} />
                       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <tbody>
-                          <DetailRow label="Education" value={formData.education} />
-                          <DetailRow label="College" value={formData.college} />
-                          <DetailRow label="Occupation" value={formData.occupation} />
-                          <DetailRow label="Company" value={formData.company} />
-                          <DetailRow label="Work Location" value={formData.workLocation} />
-                          <DetailRow label="Total Work Experience" value={formData.totalEXP} />
+                          <DetailRow label="Education" value={formData.education} theme={theme} />
+                          <DetailRow label="College" value={formData.college} theme={theme} />
+                          <DetailRow label="Occupation" value={formData.occupation} theme={theme} />
+                          <DetailRow label="Company" value={formData.company} theme={theme} />
+                          <DetailRow label="Work Location" value={formData.workLocation} theme={theme} />
+                          <DetailRow label="Total Work Experience" value={formData.totalEXP} theme={theme} />
                         </tbody>
                       </table>
                     </>
@@ -399,20 +513,21 @@ const BiodataPage1 = ({ formData }) => {
 
                   {/* Interests */}
                   {formData.hobbies && (
-                    <div style={{ marginTop: '8px' }}>
+                    <div style={{ marginTop: '10px' }}>
                       <p style={{
-                        fontSize: '9px',
+                        fontSize: '9.5px',
                         fontWeight: 700,
-                        letterSpacing: '0.15em',
+                        letterSpacing: '0.2em',
                         textTransform: 'uppercase',
-                        color: '#8B1A1A',
-                        marginBottom: '4px',
+                        color: theme.heading,
+                        marginBottom: '5px',
+                        fontFamily: 'var(--font-jakarta), "Segoe UI", sans-serif',
                       }}>Interests</p>
                       <p style={{
-                        fontSize: '10px',
-                        color: '#2D2418',
-                        lineHeight: 1.6,
-                        fontStyle: 'italic',
+                        fontSize: '10.5px',
+                        color: theme.value,
+                        lineHeight: 1.7,
+                        fontFamily: 'var(--font-jakarta), "Segoe UI", sans-serif',
                       }}>
                         {formData.hobbies.split(',').map(h => h.trim()).filter(Boolean).join('  |  ')}
                       </p>
@@ -425,20 +540,20 @@ const BiodataPage1 = ({ formData }) => {
             {/* Family Details - full width */}
             {hasFamilyDetails && (
               <div>
-                <SectionTitle title="Family Details" />
+                <SectionTitle title="Family Details" theme={theme} />
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <tbody>
                     <tr>
                       <td style={{ verticalAlign: 'top', width: '50%', paddingRight: '16px' }}>
                         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                           <tbody>
-                            <DetailRow label="Father's Name" value={formData.fatherName} />
-                            <DetailRow label="Father's Occupation" value={formData.fatherOccupation} />
-                            <DetailRow label="Mother's Name" value={formData.motherName} />
-                            <DetailRow label="Mother's Occupation" value={formData.motherOccupation} />
-                            <DetailRow label="Brothers" value={formData.brothers} />
-                            <DetailRow label="Sisters" value={formData.sisters} />
-                            <DetailRow label="Family Type" value={formData.familyType} />
+                            <DetailRow label="Father's Name" value={formData.fatherName} theme={theme} />
+                            <DetailRow label="Father's Occupation" value={formData.fatherOccupation} theme={theme} />
+                            <DetailRow label="Mother's Name" value={formData.motherName} theme={theme} />
+                            <DetailRow label="Mother's Occupation" value={formData.motherOccupation} theme={theme} />
+                            <DetailRow label="Brothers" value={formData.brothers} theme={theme} />
+                            <DetailRow label="Sisters" value={formData.sisters} theme={theme} />
+                            <DetailRow label="Family Type" value={formData.familyType} theme={theme} />
                           </tbody>
                         </table>
                       </td>
@@ -449,16 +564,16 @@ const BiodataPage1 = ({ formData }) => {
             )}
              {hasContact && (
               <div style={{ paddingTop: '4px' }}>
-                <SectionTitle title="Contact Information" />
+                <SectionTitle title="Contact Information" theme={theme} />
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <tbody>
                     <tr>
                       <td style={{ verticalAlign: 'top', width: '50%', paddingRight: '16px' }}>
                         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                           <tbody>
-                            <DetailRow label="Contact No." value={formData.contactNumber} />
-                            <DetailRow label="Email" value={formData.email} />
-                            <DetailRow label="Address" value={formData.address} />
+                            <DetailRow label="Contact No." value={formData.contactNumber} theme={theme} />
+                            <DetailRow label="Email" value={formData.email} theme={theme} />
+                            <DetailRow label="Address" value={formData.address} theme={theme} />
                           </tbody>
                         </table>
                       </td>
@@ -468,10 +583,6 @@ const BiodataPage1 = ({ formData }) => {
               </div>
             )}
 
-            {/* Footer */}
-            <div style={{ paddingTop: '8px' }}>
-              <OrnamentalDivider />
-            </div>
           </div>
         </div>
       </div>
@@ -549,7 +660,12 @@ export default function Home() {
   const [showMobilePreview, setShowMobilePreview] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [autoSaved, setAutoSaved] = useState(false);
+  const [selectedTheme, setSelectedTheme] = useState('classic');
+  const [selectedIcon, setSelectedIcon] = useState('flower');
   const fileInputRef = useRef(null);
+
+  const currentTheme = BIODATA_THEMES[selectedTheme];
+  const currentDividerSymbol = DIVIDER_ICONS.find(i => i.id === selectedIcon)?.symbol || '';
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -644,7 +760,7 @@ export default function Home() {
           scale: 2,
           useCORS: true,
           logging: false,
-          backgroundColor: '#FFFEF7',
+          backgroundColor: currentTheme.bg,
           allowTaint: true,
         });
         const img1 = canvas1.toDataURL('image/jpeg', 0.95);
@@ -963,6 +1079,39 @@ export default function Home() {
                   <Sparkles size={10} className="mr-1" /> Updates Instantly
                 </Badge>
               </div>
+
+              {/* Theme Selector */}
+              <div className="mb-3 flex flex-col items-center gap-1.5">
+                <span className="text-xs font-medium text-muted-foreground">Choose Theme</span>
+                <div className="flex gap-2">
+                  {Object.entries(BIODATA_THEMES).map(([key, t]) => (
+                    <button
+                      key={key}
+                      onClick={() => setSelectedTheme(key)}
+                      title={t.name}
+                      className={`w-8 h-8 rounded-full border-2 transition-all ${selectedTheme === key ? 'border-purple-500 scale-110 shadow-lg ring-2 ring-purple-200' : 'border-gray-200 hover:scale-105 hover:border-gray-300'}`}
+                      style={{ background: t.preview }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Icon Selector */}
+              <div className="mb-3 flex flex-col items-center gap-1.5">
+                <span className="text-xs font-medium text-muted-foreground">Divider Icon</span>
+                <div className="flex gap-2">
+                  {DIVIDER_ICONS.map((icon) => (
+                    <button
+                      key={icon.id}
+                      onClick={() => setSelectedIcon(icon.id)}
+                      title={icon.label}
+                      className={`w-7 h-7 rounded-md border-2 flex items-center justify-center text-sm transition-all ${selectedIcon === icon.id ? 'border-purple-500 scale-110 shadow-md bg-purple-50' : 'border-gray-200 hover:scale-105 hover:border-gray-300 bg-white'}`}
+                    >
+                      {icon.symbol || '—'}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <div className="rounded-xl p-2 sm:p-4 border border-border/40 bg-slate-50/80">
                 <div
                   className="overflow-auto rounded-lg shadow-lg space-y-4"
@@ -972,7 +1121,7 @@ export default function Home() {
                   <div>
                     <p className="text-[10px] text-muted-foreground mb-1 font-medium">Page 1 — Information</p>
                     <ScaledPreview>
-                      <BiodataPage1 formData={formData} />
+                      <BiodataPage1 formData={formData} theme={currentTheme} dividerSymbol={currentDividerSymbol} />
                     </ScaledPreview>
                   </div>
 
