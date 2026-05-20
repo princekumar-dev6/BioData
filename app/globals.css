@@ -4,25 +4,25 @@
 
 @layer base {
   :root {
-    --background: 40 33% 98%;
-    --foreground: 20 14% 15%;
+    --background: 250 100% 99%;
+    --foreground: 240 10% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 20 14% 15%;
+    --card-foreground: 240 10% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 20 14% 15%;
-    --primary: 0 67% 33%;
-    --primary-foreground: 40 33% 98%;
-    --secondary: 40 50% 94%;
-    --secondary-foreground: 20 14% 15%;
-    --muted: 40 30% 95%;
-    --muted-foreground: 20 10% 45%;
-    --accent: 43 74% 52%;
-    --accent-foreground: 20 14% 15%;
+    --popover-foreground: 240 10% 10%;
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 250 60% 96%;
+    --secondary-foreground: 240 10% 10%;
+    --muted: 250 30% 96%;
+    --muted-foreground: 240 5% 45%;
+    --accent: 330 80% 60%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 30 20% 88%;
-    --input: 30 20% 88%;
-    --ring: 0 67% 33%;
+    --border: 250 20% 91%;
+    --input: 250 20% 91%;
+    --ring: 262 83% 58%;
     --radius: 0.625rem;
   }
 }
@@ -50,7 +50,7 @@
 
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: #D4AF37 transparent;
+    scrollbar-color: hsl(262, 83%, 58%) transparent;
   }
 
   .scrollbar-thin::-webkit-scrollbar {
@@ -62,8 +62,23 @@
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: #D4AF37;
+    background-color: hsl(262, 83%, 58%);
     border-radius: 3px;
+  }
+
+  .gradient-primary {
+    background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+  }
+
+  .gradient-bg {
+    background: linear-gradient(135deg, #F5F3FF 0%, #FDF2F8 50%, #EEF2FF 100%);
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #7C3AED, #EC4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }
 

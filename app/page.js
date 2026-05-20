@@ -170,7 +170,7 @@ const FormField = ({ label, field, placeholder, type = 'text', value, onChange, 
       value={value || ''}
       onChange={(e) => onChange(field, e.target.value)}
       placeholder={placeholder}
-      className="h-10 bg-white border-gold/30 focus:border-gold focus:ring-gold/20"
+      className="h-10 bg-white border-border focus:border-purple-400 focus:ring-purple-200"
       {...props}
     />
   </div>
@@ -180,7 +180,7 @@ const FormSelectField = ({ label, field, options, placeholder, value, onChange }
   <div className="space-y-1.5">
     <Label className="text-sm font-medium text-foreground">{label}</Label>
     <Select value={value || ''} onValueChange={(v) => onChange(field, v)}>
-      <SelectTrigger className="h-10 bg-white border-gold/30 focus:border-gold focus:ring-gold/20">
+      <SelectTrigger className="h-10 bg-white border-border focus:border-purple-400 focus:ring-purple-200">
         <SelectValue placeholder={placeholder || `Select ${label}`} />
       </SelectTrigger>
       <SelectContent>
@@ -201,7 +201,7 @@ const FormTextareaField = ({ label, field, placeholder, rows = 3, value, onChang
       onChange={(e) => onChange(field, e.target.value)}
       placeholder={placeholder}
       rows={rows}
-      className="bg-white border-gold/30 focus:border-gold focus:ring-gold/20 resize-none"
+      className="bg-white border-border focus:border-purple-400 focus:ring-purple-200 resize-none"
     />
   </div>
 );
@@ -704,18 +704,18 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen" style={{ background: '#FFF9EC' }}>
+    <div className="min-h-screen gradient-bg">
       <Toaster richColors position="top-center" />
 
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-white/90 backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: '#8B1A1A' }}>
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center gradient-primary">
               <FileText size={18} className="text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold font-playfair" style={{ color: '#8B1A1A' }}>BiodataMaker</h1>
+              <h1 className="text-lg font-bold font-playfair gradient-text">BiodataMaker</h1>
               <p className="text-[10px] text-muted-foreground -mt-0.5">Free Marriage Biodata Creator</p>
             </div>
           </div>
@@ -729,8 +729,7 @@ export default function Home() {
               variant="outline"
               size="sm"
               onClick={resetForm}
-              className="text-muted-foreground hover:bg-red-50 hover:text-red-600 hover:border-red-200"
-              style={{ borderColor: '#D4AF3744' }}
+              className="text-muted-foreground hover:bg-red-50 hover:text-red-600 hover:border-red-200 border-border"
             >
               <RotateCcw size={14} className="mr-1" /> Reset
             </Button>
@@ -739,12 +738,11 @@ export default function Home() {
       </header>
 
       {/* Mobile Toggle */}
-      <div className="lg:hidden sticky top-[57px] z-40 bg-white/90 backdrop-blur-md border-b px-4 py-2 flex gap-2">
+      <div className="lg:hidden sticky top-[57px] z-40 bg-white/80 backdrop-blur-md border-b px-4 py-2 flex gap-2">
         <Button
           variant={!showMobilePreview ? 'default' : 'outline'}
           size="sm"
-          className={!showMobilePreview ? 'flex-1 text-white' : 'flex-1'}
-          style={!showMobilePreview ? { backgroundColor: '#8B1A1A' } : {}}
+          className={!showMobilePreview ? 'flex-1 text-white gradient-primary' : 'flex-1'}
           onClick={() => setShowMobilePreview(false)}
         >
           <Edit3 size={14} className="mr-1" /> Edit
@@ -752,8 +750,7 @@ export default function Home() {
         <Button
           variant={showMobilePreview ? 'default' : 'outline'}
           size="sm"
-          className={showMobilePreview ? 'flex-1 text-white' : 'flex-1'}
-          style={showMobilePreview ? { backgroundColor: '#8B1A1A' } : {}}
+          className={showMobilePreview ? 'flex-1 text-white gradient-primary' : 'flex-1'}
           onClick={() => setShowMobilePreview(true)}
         >
           <Eye size={14} className="mr-1" /> Preview
@@ -765,10 +762,10 @@ export default function Home() {
         <div className="flex gap-6 items-start">
           {/* Form Panel */}
           <div className={`w-full lg:w-[420px] xl:w-[460px] shrink-0 ${showMobilePreview ? 'hidden lg:block' : ''}`}>
-            <div className="bg-white rounded-xl shadow-sm border overflow-hidden" style={{ borderColor: '#D4AF3733' }}>
-              <div className="p-5 border-b" style={{ borderColor: '#E8D48B33', background: '#FBF5E6' }}>
-                <h2 className="text-lg font-bold font-playfair" style={{ color: '#8B1A1A' }}>Create Your Biodata</h2>
-                <p className="text-xs text-muted-foreground mt-0.5">Fill in your details. Preview updates instantly.</p>
+            <div className="bg-white rounded-xl shadow-sm border overflow-hidden border-border/60">
+              <div className="p-5 border-b border-border/40 gradient-primary">
+                <h2 className="text-lg font-bold font-playfair text-white">Create Your Biodata</h2>
+                <p className="text-xs text-white/70 mt-0.5">Fill in your details. Preview updates instantly.</p>
               </div>
 
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -779,7 +776,7 @@ export default function Home() {
                         key={value}
                         value={value}
                         className="flex-1 min-w-0 text-xs gap-1 data-[state=active]:bg-white data-[state=active]:shadow-sm"
-                        style={{ color: activeTab === value ? '#8B1A1A' : undefined }}
+                        style={{ color: activeTab === value ? '#7C3AED' : undefined }}
                       >
                         <Icon size={13} />
                         <span className="hidden sm:inline">{label}</span>
@@ -811,7 +808,7 @@ export default function Home() {
                       <FormSelectField label="Blood Group" field="bloodGroup" options={BLOOD_GROUP_OPTIONS} placeholder="Select" value={formData.bloodGroup} onChange={updateField} />
                       <FormSelectField label="Marital Status" field="maritalStatus" options={MARITAL_STATUS_OPTIONS} placeholder="Select" value={formData.maritalStatus} onChange={updateField} />
                     </div>
-                    <Separator className="bg-gold/10" />
+                    <Separator className="bg-purple-100" />
                     <FormSelectField label="Religion" field="religion" options={RELIGION_OPTIONS} placeholder="Select religion" value={formData.religion} onChange={updateField} />
                     <div className="grid grid-cols-2 gap-3">
                       <FormField label="Caste / Community" field="caste" placeholder="e.g., Brahmin" value={formData.caste} onChange={updateField} />
@@ -831,7 +828,7 @@ export default function Home() {
                     <FormField label="Company / Organization" field="company" placeholder="e.g., Google India" value={formData.company} onChange={updateField} />
                     <FormField label="Work Location" field="workLocation" placeholder="e.g., Bengaluru" value={formData.workLocation} onChange={updateField} />
                     <FormField label="Work Work Experience" field="totalEXP" placeholder="e.g., 4" value={formData.totalEXP} onChange={updateField} />
-                    <Separator className="bg-gold/10" />
+                    <Separator className="bg-purple-100" />
                     <FormField label="Interests / Hobbies" field="hobbies" placeholder="e.g., Reading, Traveling, Photography (comma separated)" value={formData.hobbies} onChange={updateField} />
                   </TabsContent>
 
@@ -862,8 +859,8 @@ export default function Home() {
                       value={formData.aboutMe}
                       onChange={updateField}
                     />
-                    <Separator className="bg-gold/10" />
-                    <p className="text-sm font-semibold" style={{ color: '#8B1A1A' }}>Contact Information</p>
+                    <Separator className="bg-purple-100" />
+                    <p className="text-sm font-semibold text-purple-700">Contact Information</p>
                     <FormField label="Contact Number" field="contactNumber" placeholder="e.g., +91 98765 43210" value={formData.contactNumber} onChange={updateField} />
                     <FormField label="Email Address" field="email" placeholder="e.g., name@email.com" type="email" value={formData.email} onChange={updateField} />
                     <FormTextareaField
@@ -885,7 +882,7 @@ export default function Home() {
                           <Button
                             variant="outline"
                             size="sm"
-                            style={{ borderColor: '#D4AF3744', color: '#8B1A1A' }}
+                            style={{ borderColor: '#7C3AED33', color: '#7C3AED' }}
                             onClick={() => fileInputRef.current?.click()}
                           >
                             <Plus size={14} className="mr-1" /> Add Photo
@@ -900,7 +897,7 @@ export default function Home() {
                       {/* Photo Grid */}
                       <div className="grid grid-cols-2 gap-3">
                         {(formData.photos || []).map((photo, i) => (
-                          <div key={i} className="relative group rounded-lg overflow-hidden border" style={{ borderColor: '#D4AF3744', aspectRatio: '3/4' }}>
+                          <div key={i} className="relative group rounded-lg overflow-hidden border border-border" style={{ aspectRatio: '3/4' }}>
                             <img src={photo} alt={`Photo ${i + 1}`} className="w-full h-full object-contain bg-gray-50" />
                             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
                               <button
@@ -919,12 +916,12 @@ export default function Home() {
                         {/* Add Photo Placeholder */}
                         {(formData.photos || []).length < 4 && (
                           <div
-                            className="rounded-lg border-2 border-dashed flex flex-col items-center justify-center cursor-pointer hover:opacity-70 transition-opacity"
-                            style={{ borderColor: '#D4AF3766', background: '#FBF5E6', aspectRatio: '3/4' }}
+                            className="rounded-lg border-2 border-dashed flex flex-col items-center justify-center cursor-pointer hover:opacity-70 transition-opacity border-purple-300 bg-purple-50/50"
+                            style={{ aspectRatio: '3/4' }}
                             onClick={() => fileInputRef.current?.click()}
                           >
-                            <ImagePlus size={28} style={{ color: '#D4AF37' }} />
-                            <span className="text-xs mt-1" style={{ color: '#B8960C' }}>Add Photo</span>
+                            <ImagePlus size={28} className="text-purple-400" />
+                            <span className="text-xs mt-1 text-purple-500">Add Photo</span>
                           </div>
                         )}
                       </div>
@@ -942,10 +939,9 @@ export default function Home() {
               </Tabs>
 
               {/* Action Buttons */}
-              <div className="p-4 border-t space-y-2" style={{ borderColor: '#E8D48B33', background: '#FDFAF0' }}>
+              <div className="p-4 border-t border-border/40 space-y-2 bg-muted/30">
                 <Button
-                  className="w-full font-semibold h-11 text-white"
-                  style={{ backgroundColor: '#8B1A1A' }}
+                  className="w-full font-semibold h-11 text-white gradient-primary hover:opacity-90 transition-opacity"
                   onClick={downloadPDF}
                   disabled={isGeneratingPDF}
                 >
@@ -963,11 +959,11 @@ export default function Home() {
                 <h3 className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
                   <Eye size={14} /> Live Preview
                 </h3>
-                <Badge variant="secondary" className="text-[10px] bg-green-50 text-green-700 border-green-200">
+                <Badge variant="secondary" className="text-[10px] bg-purple-50 text-purple-700 border-purple-200">
                   <Sparkles size={10} className="mr-1" /> Updates Instantly
                 </Badge>
               </div>
-              <div className="rounded-xl p-2 sm:p-4 border" style={{ borderColor: '#D4AF3722', background: '#F5F0E6' }}>
+              <div className="rounded-xl p-2 sm:p-4 border border-border/40 bg-slate-50/80">
                 <div
                   className="overflow-auto rounded-lg shadow-lg space-y-4"
                   style={{ maxHeight: 'calc(100vh - 150px)' }}
@@ -996,8 +992,7 @@ export default function Home() {
               {showMobilePreview && (
                 <div className="lg:hidden mt-4 space-y-2">
                   <Button
-                    className="w-full font-semibold h-11 text-white"
-                    style={{ backgroundColor: '#8B1A1A' }}
+                    className="w-full font-semibold h-11 text-white gradient-primary hover:opacity-90"
                     onClick={downloadPDF}
                     disabled={isGeneratingPDF}
                   >
@@ -1020,22 +1015,50 @@ export default function Home() {
       </main>
 
       {/* SEO Footer */}
-      <footer className="border-t mt-12 py-8 px-4" style={{ background: '#FBF5E6' }}>
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-lg font-bold font-playfair mb-2" style={{ color: '#8B1A1A' }}>Free Marriage Biodata Maker</h2>
-          <p className="text-sm text-muted-foreground max-w-2xl mx-auto mb-4">
-            Create beautiful matrimonial biodata for marriage in minutes. Our free online biodata maker provides
-            a premium template with photo upload, live preview, and instant PDF download. No signup required.
-          </p>
-          <div className="flex flex-wrap justify-center gap-2 mb-4">
-            {['Biodata for Marriage', 'Marriage Biodata Format', 'Free Biodata Maker', 'Indian Marriage Biodata'].map((tag) => (
+      <footer className="border-t mt-12 py-10 px-4 bg-white/60">
+        <div className="max-w-5xl mx-auto">
+          {/* Main SEO content */}
+          <div className="text-center mb-8">
+            <h2 className="text-xl font-bold font-playfair mb-3 gradient-text">Free Marriage Biodata Maker Online</h2>
+            <p className="text-sm text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+              Create beautiful bio data for marriage in minutes. BiodataMaker is the best free online biodata maker 
+              with modern templates, photo upload, live preview, and instant PDF download. Perfect for Hindu, 
+              Marathi, and all Indian marriage biodata formats. No signup or registration required — your data stays private in your browser.
+            </p>
+          </div>
+
+          {/* Internal links grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-8 max-w-3xl mx-auto">
+            {[
+              { href: '/marriage-biodata-format', label: 'Marriage Biodata Format' },
+              { href: '/hindu-biodata-format', label: 'Hindu Biodata Format' },
+              { href: '/biodata-for-boy', label: 'Biodata for Boy' },
+              { href: '/biodata-for-girl', label: 'Biodata for Girl' },
+              { href: '/simple-biodata-format', label: 'Simple Biodata Format' },
+              { href: '/modern-biodata-design', label: 'Modern Biodata Design' },
+              { href: '/marathi-biodata-format', label: 'Marathi Biodata Format' },
+            ].map((link) => (
+              <a key={link.href} href={link.href} className="text-xs text-muted-foreground hover:underline hover:text-foreground py-1">
+                {link.label}
+              </a>
+            ))}
+          </div>
+
+          {/* Keyword badges */}
+          <div className="flex flex-wrap justify-center gap-2 mb-6">
+            {[
+              'Free Biodata Maker', 'Marriage Biodata PDF', 'Biodata for Marriage',
+              'Online Biodata Maker', 'Indian Marriage Biodata', 'Shaadi Biodata',
+              'Matrimonial Biodata', 'Biodata Download Free',
+            ].map((tag) => (
               <Badge key={tag} variant="secondary" className="text-xs bg-white/80 text-muted-foreground">
                 {tag}
               </Badge>
             ))}
           </div>
-          <p className="text-xs text-muted-foreground">
-            Made with &#10084; | BiodataMaker &copy; {new Date().getFullYear()}
+
+          <p className="text-xs text-muted-foreground text-center">
+            Made with &#10084; | BiodataMaker &copy; {new Date().getFullYear()} | Free Marriage Biodata Maker Online
           </p>
         </div>
       </footer>
