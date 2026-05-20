@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 const SEO_PAGES = {
   'marriage-biodata-format': {
     h1: 'Marriage Biodata Format',
-    title: 'Marriage Biodata Format 2025 | Free Download PDF & Word',
+    title: 'Marriage Biodata Format 2026 | Free Download PDF & Word',
     description: 'Get the best marriage biodata format with modern design. Create your matrimonial biodata online for free with photo, personal details, family info and download as PDF instantly.',
     keywords: 'marriage biodata format, biodata format for marriage, marriage biodata format pdf, marriage biodata format word, matrimonial biodata format',
     content: `Looking for the perfect marriage biodata format? FreeShaadiBiodata offers a professionally designed biodata format that includes all essential sections — personal details, education & career, family information, contact details, and photo gallery. Our format is accepted across all matrimonial platforms and is perfect for sharing with family and matchmakers.`,

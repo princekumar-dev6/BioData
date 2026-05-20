@@ -20,7 +20,7 @@ export const metadata = {
     template: '%s | FreeShaadiBiodata',
   },
   description: 'Create beautiful bio data for marriage in minutes. Free online shaadi biodata maker with modern templates, photo upload, and instant PDF download. Best biodata maker for Hindu, Marathi, Hindi marriage. No signup required.',
-  keywords: 'free biodata maker, marriage biodata maker, biodata for marriage, online biodata maker, marriage biodata format, shaadi biodata, matrimonial biodata, biodata maker online, free marriage biodata maker pdf, Hindu marriage biodata format, simple biodata format, modern biodata design for marriage, biodata for boy, biodata for girl, Indian marriage biodata template, biodata download pdf',
+  keywords: 'free shaadi biodata, free biodata maker, marriage biodata maker, biodata for marriage, shaadi biodata maker, online biodata maker, marriage biodata format, shaadi biodata, matrimonial biodata, biodata maker online free, free marriage biodata maker pdf, Hindu marriage biodata format, simple biodata format, modern biodata design for marriage, biodata for boy, biodata for girl, Indian marriage biodata template, biodata download pdf free, shaadi biodata format, marriage biodata pdf download, free biodata creator, biodata banane wala app',
   metadataBase: new URL('https://freeshaadibiodata.in'),
   alternates: {
     canonical: '/',
