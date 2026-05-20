@@ -715,7 +715,7 @@ export default function Home() {
               <FileText size={18} className="text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold font-playfair gradient-text">BiodataMaker</h1>
+              <h1 className="text-lg font-bold font-playfair gradient-text">FreeShaadiBiodata</h1>
               <p className="text-[10px] text-muted-foreground -mt-0.5">Free Marriage Biodata Creator</p>
             </div>
           </div>
@@ -1019,9 +1019,9 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
           {/* Main SEO content */}
           <div className="text-center mb-8">
-            <h2 className="text-xl font-bold font-playfair mb-3 gradient-text">Free Marriage Biodata Maker Online</h2>
+            <h2 className="text-xl font-bold font-playfair mb-3 gradient-text">Free Shaadi Biodata Maker Online</h2>
             <p className="text-sm text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Create beautiful bio data for marriage in minutes. BiodataMaker is the best free online biodata maker 
+              Create beautiful bio data for marriage in minutes. FreeShaadiBiodata is the best free online biodata maker 
               with modern templates, photo upload, live preview, and instant PDF download. Perfect for Hindu, 
               Marathi, and all Indian marriage biodata formats. No signup or registration required — your data stays private in your browser.
             </p>
@@ -1058,7 +1058,7 @@ export default function Home() {
           </div>
 
           <p className="text-xs text-muted-foreground text-center">
-            Made with &#10084; | BiodataMaker &copy; {new Date().getFullYear()} | Free Marriage Biodata Maker Online
+            Made with &#10084; | FreeShaadiBiodata &copy; {new Date().getFullYear()} | Free Shaadi Biodata Maker Online
           </p>
         </div>
       </footer>

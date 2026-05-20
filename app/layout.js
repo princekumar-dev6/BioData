@@ -1,41 +1,42 @@
-import { Inter, Playfair_Display } from 'next/font/google';
+import { Plus_Jakarta_Sans, Cormorant_Garamond } from 'next/font/google';
 import './globals.css';
 
-const inter = Inter({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-jakarta',
   display: 'swap',
 });
 
-const playfair = Playfair_Display({
+const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
-  variable: '--font-playfair',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-cormorant',
   display: 'swap',
 });
 
 export const metadata = {
   title: {
-    default: 'Free Marriage Biodata Maker Online | Create & Download PDF Biodata',
-    template: '%s | BiodataMaker',
+    default: 'Free Shaadi Biodata Maker Online | Create & Download PDF Biodata',
+    template: '%s | FreeShaadiBiodata',
   },
-  description: 'Create beautiful bio data for marriage in minutes. Free online biodata maker with modern templates, photo upload, and instant PDF download. Best biodata maker for Hindu, Marathi, Hindi marriage. No signup required.',
+  description: 'Create beautiful bio data for marriage in minutes. Free online shaadi biodata maker with modern templates, photo upload, and instant PDF download. Best biodata maker for Hindu, Marathi, Hindi marriage. No signup required.',
   keywords: 'free biodata maker, marriage biodata maker, biodata for marriage, online biodata maker, marriage biodata format, shaadi biodata, matrimonial biodata, biodata maker online, free marriage biodata maker pdf, Hindu marriage biodata format, simple biodata format, modern biodata design for marriage, biodata for boy, biodata for girl, Indian marriage biodata template, biodata download pdf',
-  metadataBase: new URL('https://biodatamaker.in'),
+  metadataBase: new URL('https://freeshaadibiodata.in'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: 'Free Marriage Biodata Maker Online | Create & Download PDF Biodata',
+    title: 'Free Shaadi Biodata Maker Online | Create & Download PDF Biodata',
     description: 'Create stunning matrimonial biodata for marriage in minutes. Modern templates with photo upload and instant PDF download. No signup required.',
     type: 'website',
     locale: 'en_IN',
     url: '/',
-    siteName: 'BiodataMaker',
+    siteName: 'FreeShaadiBiodata',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Free Marriage Biodata Maker Online | PDF Download',
-    description: 'Create beautiful marriage biodata in minutes. Free online maker with modern templates and instant PDF download.',
+    title: 'Free Shaadi Biodata Maker Online | PDF Download',
+    description: 'Create beautiful shaadi biodata in minutes. Free online maker with modern templates and instant PDF download.',
   },
   robots: {
     index: true,
@@ -48,18 +49,18 @@ export const metadata = {
       'max-snippet': -1,
     },
   },
-  verification: {
-    google: 'your-google-verification-code',
-  },
+  // verification: {
+  //   google: 'YOUR_GOOGLE_SEARCH_CONSOLE_CODE',
+  // },
 };
 
 export default function RootLayout({ children }) {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
-    name: 'BiodataMaker',
-    description: 'Free online marriage biodata maker. Create beautiful bio data for marriage with modern templates, photo upload, and instant PDF download.',
-    url: 'https://biodatamaker.in',
+    name: 'FreeShaadiBiodata',
+    description: 'Free online shaadi biodata maker. Create beautiful bio data for marriage with modern templates, photo upload, and instant PDF download.',
+    url: 'https://freeshaadibiodata.in',
     applicationCategory: 'UtilityApplication',
     operatingSystem: 'Any',
     offers: {
@@ -80,10 +81,10 @@ export default function RootLayout({ children }) {
     mainEntity: [
       {
         '@type': 'Question',
-        name: 'Is BiodataMaker really free?',
+        name: 'Is FreeShaadiBiodata really free?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Yes, BiodataMaker is 100% free. No hidden charges, no watermarks on your PDF, and no signup or registration required. Create unlimited biodata downloads.',
+          text: 'Yes, FreeShaadiBiodata is 100% free. No hidden charges, no watermarks on your PDF, and no signup or registration required. Create unlimited biodata downloads.',
         },
       },
       {
@@ -122,7 +123,7 @@ export default function RootLayout({ children }) {
   };
 
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+    <html lang="en" className={`${jakarta.variable} ${cormorant.variable}`}>
       <head>
         <script
           type="application/ld+json"
@@ -133,7 +134,7 @@ export default function RootLayout({ children }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
         />
       </head>
-      <body className={`${inter.className} min-h-screen`}>
+      <body className={`${jakarta.className} min-h-screen`}>
         {children}
       </body>
     </html>

@@ -1,5 +1,5 @@
 export default function sitemap() {
-  const baseUrl = 'https://biodatamaker.in';
+  const baseUrl = 'https://freeshaadibiodata.in';
 
   const seoPages = [
     'marriage-biodata-format',

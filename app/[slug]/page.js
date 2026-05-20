@@ -7,7 +7,7 @@ const SEO_PAGES = {
     title: 'Marriage Biodata Format 2025 | Free Download PDF & Word',
     description: 'Get the best marriage biodata format with modern design. Create your matrimonial biodata online for free with photo, personal details, family info and download as PDF instantly.',
     keywords: 'marriage biodata format, biodata format for marriage, marriage biodata format pdf, marriage biodata format word, matrimonial biodata format',
-    content: `Looking for the perfect marriage biodata format? BiodataMaker offers a professionally designed biodata format that includes all essential sections — personal details, education & career, family information, contact details, and photo gallery. Our format is accepted across all matrimonial platforms and is perfect for sharing with family and matchmakers.`,
+    content: `Looking for the perfect marriage biodata format? FreeShaadiBiodata offers a professionally designed biodata format that includes all essential sections — personal details, education & career, family information, contact details, and photo gallery. Our format is accepted across all matrimonial platforms and is perfect for sharing with family and matchmakers.`,
     features: [
       'Clean, modern design accepted everywhere',
       'Includes personal, career, family & contact sections',
@@ -121,7 +121,7 @@ export default function SEOPage({ params }) {
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
             </div>
             <div>
-              <span className="text-lg font-bold font-playfair gradient-text">BiodataMaker</span>
+              <span className="text-lg font-bold font-playfair gradient-text">FreeShaadiBiodata</span>
               <p className="text-[10px] text-muted-foreground -mt-0.5">Free Marriage Biodata Creator</p>
             </div>
           </Link>
@@ -231,7 +231,7 @@ export default function SEOPage({ params }) {
         <div className="max-w-4xl mx-auto">
           <div className="grid md:grid-cols-2 gap-8 mb-6">
             <div>
-              <h3 className="font-bold mb-2 gradient-text">BiodataMaker</h3>
+              <h3 className="font-bold mb-2 gradient-text">FreeShaadiBiodata</h3>
               <p className="text-sm text-muted-foreground">
                 Free online marriage biodata maker trusted by thousands. Create, preview, and download your biodata in minutes.
               </p>
@@ -248,7 +248,7 @@ export default function SEOPage({ params }) {
             </div>
           </div>
           <p className="text-xs text-muted-foreground text-center border-t border-border pt-4">
-            BiodataMaker © {new Date().getFullYear()} | Free Marriage Biodata Maker Online
+            FreeShaadiBiodata © {new Date().getFullYear()} | Free Shaadi Biodata Maker Online
           </p>
         </div>
       </footer>
@@ -277,7 +277,7 @@ export function generateMetadata({ params }) {
       type: 'website',
       locale: 'en_IN',
       url: `/${params.slug}`,
-      siteName: 'BiodataMaker',
+      siteName: 'FreeShaadiBiodata',
     },
   };
 }

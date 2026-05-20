@@ -6,6 +6,6 @@ export default function robots() {
         allow: '/',
       },
     ],
-    sitemap: 'https://biodatamaker.in/sitemap.xml',
+    sitemap: 'https://freeshaadibiodata.in/sitemap.xml',
   };
 }
