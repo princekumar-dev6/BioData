@@ -288,11 +288,12 @@ const FormField = ({ label, field, placeholder, type = 'text', value, onChange, 
 const FormSelectField = ({ label, field, options, placeholder, value, onChange }) => (
   <div className="space-y-1.5">
     <Label className="text-sm font-medium text-foreground">{label}</Label>
-    <Select value={value || ''} onValueChange={(v) => onChange(field, v)}>
+    <Select value={value || ''} onValueChange={(v) => onChange(field, v === '__clear__' ? '' : v)}>
       <SelectTrigger className="h-10 bg-white border-border focus:border-purple-400 focus:ring-purple-200">
         <SelectValue placeholder={placeholder || `Select ${label}`} />
       </SelectTrigger>
       <SelectContent>
+        <SelectItem value="__clear__" className="text-muted-foreground">Select</SelectItem>
         {options.map((opt) => (
           <SelectItem key={opt} value={opt}>{opt}</SelectItem>
         ))}
