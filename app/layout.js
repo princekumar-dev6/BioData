@@ -1,7 +1,6 @@
 import { Plus_Jakarta_Sans, Cormorant_Garamond } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
-import { Analytics } from '@vercel/analytics/next';
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -23,7 +22,7 @@ export const metadata = {
   },
   description: 'Create beautiful bio data for marriage in minutes. Free online shaadi biodata maker with modern templates, photo upload, and instant PDF download. Best biodata maker for Hindu, Marathi, Hindi marriage. No signup required.',
   keywords: 'free shaadi biodata, free biodata maker, marriage biodata maker, biodata for marriage, shaadi biodata maker, online biodata maker, marriage biodata format, shaadi biodata, matrimonial biodata, biodata maker online free, free marriage biodata maker pdf, Hindu marriage biodata format, simple biodata format, modern biodata design for marriage, biodata for boy, biodata for girl, Indian marriage biodata template, biodata download pdf free, shaadi biodata format, marriage biodata pdf download, free biodata creator, biodata banane wala app',
-  metadataBase: new URL('https://freeshaadibiodata.in'),
+  metadataBase: new URL('https://www.freeshaadibiodata.in'),
   alternates: {
     canonical: '/',
   },
@@ -36,7 +35,7 @@ export const metadata = {
     siteName: 'FreeShaadiBiodata',
     images: [
       {
-        url: 'https://freeshaadibiodata.in/og-image.jpg',
+        url: 'https://www.freeshaadibiodata.in/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'Free Shaadi Biodata - Create Your Matrimonial Profile Instantly',
@@ -48,7 +47,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Free Shaadi Biodata Maker Online | PDF Download',
     description: 'Create beautiful shaadi biodata in minutes. Free online maker with modern templates and instant PDF download.',
-    images: ['https://freeshaadibiodata.in/og-image.jpg'],
+    images: ['https://www.freeshaadibiodata.in/og-image.jpg'],
   },
   robots: {
     index: true,
@@ -72,7 +71,7 @@ export default function RootLayout({ children }) {
     '@type': 'WebApplication',
     name: 'FreeShaadiBiodata',
     description: 'Free online shaadi biodata maker. Create beautiful bio data for marriage with modern templates, photo upload, and instant PDF download.',
-    url: 'https://freeshaadibiodata.in',
+    url: 'https://www.freeshaadibiodata.in',
     applicationCategory: 'UtilityApplication',
     operatingSystem: 'Any',
     offers: {
@@ -137,6 +136,16 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${jakarta.variable} ${cormorant.variable}`}>
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      </head>
+      <body className={`${jakarta.className} min-h-screen`}>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-ZBXRW4SW4Z"
           strategy="afterInteractive"
@@ -149,18 +158,7 @@ export default function RootLayout({ children }) {
             gtag('config', 'G-ZBXRW4SW4Z');
           `}
         </Script>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-        />
-      </head>
-      <body className={`${jakarta.className} min-h-screen`}>
         {children}
-         <Analytics />
       </body>
     </html>
   );
