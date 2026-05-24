@@ -322,7 +322,7 @@ const FormTextareaField = ({ label, field, placeholder, rows = 3, value, onChang
 const OrnamentalDivider = ({ theme, symbol }) => (
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '8px 0' }}>
     <div style={{ flex: 1, height: '1px', background: `linear-gradient(to right, transparent, ${theme.accent}, transparent)` }} />
-    {symbol && <div style={{ margin: '0 12px', color: theme.accent, fontSize: '12px', lineHeight: 1 }}>{symbol}</div>}
+    {symbol && <div style={{ margin: '0 12px', color: theme.accent, fontSize: '12px', lineHeight: 1, position: 'relative', top: '-1.5px' }}>{symbol}</div>}
     <div style={{ flex: 1, height: '1px', background: `linear-gradient(to right, transparent, ${theme.accent}, transparent)` }} />
   </div>
 );
@@ -338,6 +338,8 @@ const SectionTitle = ({ title, theme }) => (
       color: theme.heading,
       whiteSpace: 'nowrap',
       fontFamily: 'var(--font-jakarta), "Segoe UI", sans-serif',
+      position: 'relative',
+      top: '-1.5px',
     }}>{title}</span>
     <div style={{ flex: 1, height: '1px', background: `linear-gradient(to left, transparent, ${theme.accent})` }} />
   </div>
@@ -740,6 +742,24 @@ export default function Home() {
     toast.success('Photo removed');
   };
 
+  // Helper: clone element to body for clean html2canvas capture (no parent transforms)
+  const captureElement = async (html2canvas, element, options) => {
+    const clone = element.cloneNode(true);
+    clone.style.position = 'fixed';
+    clone.style.left = '0';
+    clone.style.top = '0';
+    clone.style.zIndex = '-9999';
+    clone.style.pointerEvents = 'none';
+    document.body.appendChild(clone);
+
+    // Allow a frame for the browser to render the clone
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+    const canvas = await html2canvas(clone, options);
+    document.body.removeChild(clone);
+    return canvas;
+  };
+
   // Download PDF (2 pages)
   const downloadPDF = async () => {
     setIsGeneratingPDF(true);
@@ -753,15 +773,17 @@ export default function Home() {
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
 
-      // Page 1 - Information
+      // Page 1 - Information (clone outside ScaledPreview transform)
       const page1 = document.getElementById('biodata-page1');
       if (page1) {
-        const canvas1 = await html2canvas(page1, {
+        const canvas1 = await captureElement(html2canvas, page1, {
           scale: 2,
           useCORS: true,
           logging: false,
           backgroundColor: currentTheme.bg,
           allowTaint: true,
+          width: 595,
+          height: 842,
         });
         const img1 = canvas1.toDataURL('image/jpeg', 0.95);
         pdf.addImage(img1, 'JPEG', 0, 0, pageWidth, pageHeight);
@@ -771,12 +793,14 @@ export default function Home() {
       const page2 = document.getElementById('biodata-page2');
       if (page2 && (formData.photos || []).length > 0) {
         pdf.addPage();
-        const canvas2 = await html2canvas(page2, {
+        const canvas2 = await captureElement(html2canvas, page2, {
           scale: 3,
           useCORS: true,
           logging: false,
           backgroundColor: '#FFFFFF',
           allowTaint: true,
+          width: 595,
+          height: 842,
         });
         const img2 = canvas2.toDataURL('image/png');
         pdf.addImage(img2, 'PNG', 0, 0, pageWidth, pageHeight);
