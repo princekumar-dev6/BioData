@@ -1,4 +1,5 @@
 import { Plus_Jakarta_Sans, Cormorant_Garamond } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import { Analytics } from '@vercel/analytics/next';
 
@@ -136,6 +137,18 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${jakarta.variable} ${cormorant.variable}`}>
       <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-ZBXRW4SW4Z"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-ZBXRW4SW4Z');
+          `}
+        </Script>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
