@@ -1231,6 +1231,19 @@ export default function Home() {
             ))}
           </div>
 
+          {/* Feedback CTA */}
+          <div className="text-center mb-6">
+            <a
+              href="https://forms.gle/FqdEvsViAW3dT5nT6"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-full hover:bg-purple-100 transition-colors"
+            >
+              <Edit3 size={14} />
+              Feedback & Issue Report
+            </a>
+          </div>
+
           <p className="text-xs text-muted-foreground text-center">
             Made with &#10084; | FreeShaadiBiodata &copy; {new Date().getFullYear()} | Free Shaadi Biodata Maker Online
           </p>

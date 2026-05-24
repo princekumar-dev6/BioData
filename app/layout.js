@@ -32,11 +32,20 @@ export const metadata = {
     locale: 'en_IN',
     url: '/',
     siteName: 'FreeShaadiBiodata',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Free Shaadi Biodata - Create Your Matrimonial Profile Instantly',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Free Shaadi Biodata Maker Online | PDF Download',
     description: 'Create beautiful shaadi biodata in minutes. Free online maker with modern templates and instant PDF download.',
+    images: ['/og-image.jpg'],
   },
   robots: {
     index: true,
