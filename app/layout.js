@@ -1,5 +1,6 @@
 import { Plus_Jakarta_Sans, Cormorant_Garamond } from 'next/font/google';
 import './globals.css';
+import { Analytics } from '@vercel/analytics/next';
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -146,6 +147,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className={`${jakarta.className} min-h-screen`}>
         {children}
+         <Analytics />
       </body>
     </html>
   );
