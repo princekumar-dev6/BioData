@@ -178,6 +178,7 @@ const DEFAULT_FORM_DATA = {
   email: '',
   address: '',
   photos: [],
+  customFields: { personal: [], career: [], family: [], contact: [] },
 };
 
 // ============================================================
@@ -316,6 +317,87 @@ const FormTextareaField = ({ label, field, placeholder, rows = 3, value, onChang
   </div>
 );
 
+const CustomFieldsEditor = ({ section, fields, onUpdate, showAddAtTop }) => {
+  const addField = () => {
+    onUpdate([...fields, { label: '', value: '' }]);
+  };
+  const removeField = (idx) => {
+    onUpdate(fields.filter((_, i) => i !== idx));
+  };
+  const updateFieldData = (idx, key, val) => {
+    const updated = [...fields];
+    updated[idx] = { ...updated[idx], [key]: val };
+    onUpdate(updated);
+  };
+
+  if (showAddAtTop) {
+    // Render add button + fields together at the top
+    return (
+      <div className="space-y-2.5">
+        <div className="flex items-center justify-end">
+          <Button variant="outline" size="sm" className="text-xs rounded-full border-purple-200 !text-purple-700 hover:!bg-purple-50 hover:!text-purple-900 px-4" onClick={addField}>
+            <Plus size={12} className="mr-1" /> Custom Field
+          </Button>
+        </div>
+        {fields.length > 0 && fields.map((field, idx) => (
+          <div key={idx} className="flex items-center gap-2">
+            <Input
+              value={field.label}
+              onChange={(e) => updateFieldData(idx, 'label', e.target.value)}
+              placeholder="Label"
+              className="h-9 text-sm flex-1 bg-purple-50/50 border-purple-100 rounded-full px-4 focus:border-purple-400 focus:ring-purple-200"
+            />
+            <Input
+              value={field.value}
+              onChange={(e) => updateFieldData(idx, 'value', e.target.value)}
+              placeholder="Value"
+              className="h-9 text-sm flex-1 bg-purple-50/50 border-purple-100 rounded-full px-4 focus:border-purple-400 focus:ring-purple-200"
+            />
+            <button
+              onClick={() => removeField(idx)}
+              className="w-8 h-8 rounded-full flex items-center justify-center text-muted-foreground hover:text-red-500 hover:bg-red-50 shrink-0 border border-transparent hover:border-red-200 transition-colors"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      <Separator className="bg-purple-100" />
+      <p className="text-xs font-medium text-muted-foreground">Custom Fields</p>
+      {fields.map((field, idx) => (
+        <div key={idx} className="flex items-center gap-2">
+          <Input
+            value={field.label}
+            onChange={(e) => updateFieldData(idx, 'label', e.target.value)}
+            placeholder="Label"
+            className="h-9 text-sm flex-1 bg-white"
+          />
+          <Input
+            value={field.value}
+            onChange={(e) => updateFieldData(idx, 'value', e.target.value)}
+            placeholder="Value"
+            className="h-9 text-sm flex-1 bg-white"
+          />
+          <button
+            onClick={() => removeField(idx)}
+            className="w-8 h-8 rounded-md flex items-center justify-center text-muted-foreground hover:text-red-500 hover:bg-red-50 shrink-0"
+          >
+            <X size={14} />
+          </button>
+        </div>
+      ))}
+      <Button variant="outline" size="sm" className="w-full text-xs" onClick={addField}>
+        <Plus size={12} className="mr-1" /> Add Custom Field
+      </Button>
+    </div>
+  );
+};
+
 // ============================================================
 // TEMPLATE COMPONENTS
 // ============================================================
@@ -433,7 +515,7 @@ const BiodataPage1 = ({ formData, theme, dividerSymbol }) => {
           <div style={{ position: 'absolute', bottom: '8px', right: '8px', width: '14px', height: '14px', borderBottom: `2px solid ${theme.corner}`, borderRight: `2px solid ${theme.corner}`, borderBottomRightRadius: '2px' }} />
 
           {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+          <div style={{ textAlign: 'center', marginBottom: formData.aboutMe ? '8px' : '2px' }}>
             <p style={{ fontSize: '11px', marginBottom: '4px', color: theme.accent, fontFamily: 'Georgia, serif', letterSpacing: '0.05em' }}>
               || &#2358;&#2381;&#2352;&#2368; &#2327;&#2339;&#2375;&#2358;&#2366;&#2351; &#2344;&#2350;&#2307; ||
             </p>
@@ -442,7 +524,7 @@ const BiodataPage1 = ({ formData, theme, dividerSymbol }) => {
               fontSize: '24px',
               fontWeight: 700,
               letterSpacing: '0.04em',
-              margin: '8px 0 4px',
+              margin: formData.aboutMe ? '8px 0 4px' : '8px 0 0',
               color: theme.name,
               fontFamily: 'var(--font-cormorant), Georgia, serif',
             }}>
@@ -453,10 +535,10 @@ const BiodataPage1 = ({ formData, theme, dividerSymbol }) => {
                 fontSize: '10.5px',
                 lineHeight: 1.7,
                 color: theme.subtext,
-                fontStyle: 'italic',
                 maxWidth: '440px',
                 margin: '6px auto 2px',
                 padding: '0 8px',
+                fontFamily: 'var(--font-jakarta), "Segoe UI", sans-serif',
               }}>
                 {formData.aboutMe}
               </p>
@@ -490,6 +572,9 @@ const BiodataPage1 = ({ formData, theme, dividerSymbol }) => {
                           <DetailRow label="Sub-Caste" value={formData.subCaste} theme={theme} />
                           <DetailRow label="Gotra" value={formData.gotra} theme={theme} />
                           <DetailRow label="Mother Tongue" value={formData.motherTongue} theme={theme} />
+                          {((formData.customFields || {}).personal || []).filter(f => f.label && f.value).map((f, i) => (
+                            <DetailRow key={`cp${i}`} label={f.label} value={f.value} theme={theme} />
+                          ))}
                         </tbody>
                       </table>
                     </>
@@ -509,6 +594,9 @@ const BiodataPage1 = ({ formData, theme, dividerSymbol }) => {
                           <DetailRow label="Company" value={formData.company} theme={theme} />
                           <DetailRow label="Work Location" value={formData.workLocation} theme={theme} />
                           <DetailRow label="Total Work Experience" value={formData.totalEXP} theme={theme} />
+                          {((formData.customFields || {}).career || []).filter(f => f.label && f.value).map((f, i) => (
+                            <DetailRow key={`cc${i}`} label={f.label} value={f.value} theme={theme} />
+                          ))}
                         </tbody>
                       </table>
                     </>
@@ -544,7 +632,7 @@ const BiodataPage1 = ({ formData, theme, dividerSymbol }) => {
             {hasFamilyDetails && (
               <div>
                 <SectionTitle title="Family Details" theme={theme} />
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <table style={{ borderCollapse: 'collapse' }}>
                   <tbody>
                     <tr>
                       <td style={{ verticalAlign: 'top', width: '50%', paddingRight: '16px' }}>
@@ -557,6 +645,9 @@ const BiodataPage1 = ({ formData, theme, dividerSymbol }) => {
                             <DetailRow label="Brothers" value={formData.brothers} theme={theme} />
                             <DetailRow label="Sisters" value={formData.sisters} theme={theme} />
                             <DetailRow label="Family Type" value={formData.familyType} theme={theme} />
+                            {((formData.customFields || {}).family || []).filter(f => f.label && f.value).map((f, i) => (
+                              <DetailRow key={`cf${i}`} label={f.label} value={f.value} theme={theme} />
+                            ))}
                           </tbody>
                         </table>
                       </td>
@@ -577,6 +668,9 @@ const BiodataPage1 = ({ formData, theme, dividerSymbol }) => {
                             <DetailRow label="Contact No." value={formData.contactNumber} theme={theme} />
                             <DetailRow label="Email" value={formData.email} theme={theme} />
                             <DetailRow label="Address" value={formData.address} theme={theme} />
+                            {((formData.customFields || {}).contact || []).filter(f => f.label && f.value).map((f, i) => (
+                              <DetailRow key={`ct${i}`} label={f.label} value={f.value} theme={theme} />
+                            ))}
                           </tbody>
                         </table>
                       </td>
@@ -959,10 +1053,21 @@ export default function Home() {
                       <FormField label="Gotra" field="gotra" placeholder="Optional" value={formData.gotra} onChange={updateField} />
                       <FormField label="Mother Tongue" field="motherTongue" placeholder="e.g., Hindi" value={formData.motherTongue} onChange={updateField} />
                     </div>
+                    <CustomFieldsEditor
+                      section="personal"
+                      fields={(formData.customFields || {}).personal || []}
+                      onUpdate={(fields) => setFormData((prev) => ({ ...prev, customFields: { ...prev.customFields, personal: fields } }))}
+                    />
                   </TabsContent>
 
                   {/* Career Tab */}
                   <TabsContent value="career" className="mt-0 space-y-4">
+                    <CustomFieldsEditor
+                      section="career"
+                      fields={(formData.customFields || {}).career || []}
+                      onUpdate={(fields) => setFormData((prev) => ({ ...prev, customFields: { ...prev.customFields, career: fields } }))}
+                      showAddAtTop
+                    />
                     <FormField label="Highest Education" field="education" placeholder="e.g., B.Tech, MBA" value={formData.education} onChange={updateField} />
                     <FormField label="College / University" field="college" placeholder="e.g., IIT Delhi" value={formData.college} onChange={updateField} />
                     <FormField label="Occupation" field="occupation" placeholder="e.g., Software Engineer" value={formData.occupation} onChange={updateField} />
@@ -975,6 +1080,12 @@ export default function Home() {
 
                   {/* Family Tab */}
                   <TabsContent value="family" className="mt-0 space-y-4">
+                    <CustomFieldsEditor
+                      section="family"
+                      fields={(formData.customFields || {}).family || []}
+                      onUpdate={(fields) => setFormData((prev) => ({ ...prev, customFields: { ...prev.customFields, family: fields } }))}
+                      showAddAtTop
+                    />
                     <div className="grid grid-cols-2 gap-3">
                       <FormField label="Father's Name" field="fatherName" placeholder="Full name" value={formData.fatherName} onChange={updateField} />
                       <FormField label="Father's Occupation" field="fatherOccupation" placeholder="e.g., Businessman" value={formData.fatherOccupation} onChange={updateField} />
@@ -992,6 +1103,12 @@ export default function Home() {
 
                   {/* About & Contact Tab */}
                   <TabsContent value="about" className="mt-0 space-y-4">
+                    <CustomFieldsEditor
+                      section="contact"
+                      fields={(formData.customFields || {}).contact || []}
+                      onUpdate={(fields) => setFormData((prev) => ({ ...prev, customFields: { ...prev.customFields, contact: fields } }))}
+                      showAddAtTop
+                    />
                     <FormTextareaField
                       label="About Me"
                       field="aboutMe"
@@ -1023,10 +1140,10 @@ export default function Home() {
                           <Button
                             variant="outline"
                             size="sm"
-                            style={{ borderColor: '#7C3AED33', color: '#7C3AED' }}
+                            className="text-xs rounded-full border-purple-200 !text-purple-700 hover:!bg-purple-50 hover:!text-purple-900 px-4"
                             onClick={() => fileInputRef.current?.click()}
                           >
-                            <Plus size={14} className="mr-1" /> Add Photo
+                            <Plus size={12} className="mr-1" /> Add Photo
                           </Button>
                         )}
                       </div>
