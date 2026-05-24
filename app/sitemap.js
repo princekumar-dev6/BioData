@@ -1,5 +1,6 @@
 export default function sitemap() {
-  const baseUrl = 'https://freeshaadibiodata.in';
+  const baseUrl = 'https://www.freeshaadibiodata.in';
+  const lastModified = '2025-05-24';
 
   const seoPages = [
     'marriage-biodata-format',
@@ -14,13 +15,13 @@ export default function sitemap() {
   return [
     {
       url: baseUrl,
-      lastModified: new Date(),
+      lastModified,
       changeFrequency: 'weekly',
       priority: 1,
     },
     ...seoPages.map((slug) => ({
       url: `${baseUrl}/${slug}`,
-      lastModified: new Date(),
+      lastModified,
       changeFrequency: 'monthly',
       priority: 0.8,
     })),
