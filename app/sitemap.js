@@ -19,6 +19,12 @@ export default function sitemap() {
       changeFrequency: 'weekly',
       priority: 1,
     },
+    {
+      url: `${baseUrl}/privacy-policy`,
+      lastModified,
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
     ...seoPages.map((slug) => ({
       url: `${baseUrl}/${slug}`,
       lastModified,

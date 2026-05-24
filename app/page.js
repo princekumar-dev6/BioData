@@ -1363,6 +1363,8 @@ export default function Home() {
 
           <p className="text-xs text-muted-foreground text-center">
             Made with &#10084; | FreeShaadiBiodata &copy; {new Date().getFullYear()} | Free Shaadi Biodata Maker Online
+            <br />
+            <a href="/privacy-policy" className="hover:underline">Privacy Policy</a>
           </p>
         </div>
       </footer>
