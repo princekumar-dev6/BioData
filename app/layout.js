@@ -1,5 +1,5 @@
 import { Plus_Jakarta_Sans, Cormorant_Garamond } from 'next/font/google';
-import Script from 'next/script';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 
 const jakarta = Plus_Jakarta_Sans({
@@ -136,6 +136,17 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${jakarta.variable} ${cormorant.variable}`}>
       <head>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZBXRW4SW4Z" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-ZBXRW4SW4Z');
+            `,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -146,19 +157,8 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className={`${jakarta.className} min-h-screen`}>
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-ZBXRW4SW4Z"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-ZBXRW4SW4Z');
-          `}
-        </Script>
         {children}
+        <Analytics />
       </body>
     </html>
   );
