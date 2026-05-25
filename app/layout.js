@@ -136,6 +136,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${jakarta.variable} ${cormorant.variable}`}>
       <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/android-chrome-192x192.png" />
+        <link rel="apple-touch-icon" href="/android-chrome-512x512.png" />
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZBXRW4SW4Z" />
         <script
           dangerouslySetInnerHTML={{
