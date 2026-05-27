@@ -1,0 +1,21 @@
+{
+  "name": "Free Shaadi Biodata",
+  "short_name": "Shaadi Biodata",
+  "description": "Create beautiful marriage biodata online for free.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ff0f5b",
+  "theme_color": "#ff0f5b",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
