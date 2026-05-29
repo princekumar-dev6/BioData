@@ -278,6 +278,14 @@ export function generateMetadata({ params }) {
       locale: 'en_IN',
       url: `/${params.slug}`,
       siteName: 'FreeShaadiBiodata',
+      images: [
+        {
+          url: 'https://www.freeshaadibiodata.in/og-image.jpg',
+          width: 1200,
+          height: 630,
+          alt: page.h1,
+        },
+      ],
     },
   };
 }

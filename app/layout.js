@@ -60,9 +60,6 @@ export const metadata = {
       'max-snippet': -1,
     },
   },
-  // verification: {
-  //   google: 'YOUR_GOOGLE_SEARCH_CONSOLE_CODE',
-  // },
 };
 
 export default function RootLayout({ children }) {
@@ -79,11 +76,7 @@ export default function RootLayout({ children }) {
       price: '0',
       priceCurrency: 'INR',
     },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.8',
-      ratingCount: '2450',
-    },
+
   };
 
   const faqJsonLd = {
@@ -142,6 +135,7 @@ export default function RootLayout({ children }) {
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="manifest" href="/site.webmanifest" />
+        <meta name="theme-color" content="#7C3AED" />
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZBXRW4SW4Z" />
         <script
           dangerouslySetInnerHTML={{

@@ -1,6 +1,6 @@
 export default function sitemap() {
   const baseUrl = 'https://www.freeshaadibiodata.in';
-  const lastModified = new Date().toISOString();
+  const lastModified = '2025-05-30';
 
   const seoPages = [
     'marriage-biodata-format',
