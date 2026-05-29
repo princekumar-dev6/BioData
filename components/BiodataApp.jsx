@@ -748,6 +748,196 @@ const BiodataPage2 = ({ formData }) => {
 };
 
 // ============================================================
+// TEMPLATE 2: ELEGANT — Centered decorative header band
+// ============================================================
+
+const BiodataPage1Elegant = ({ formData, theme, dividerSymbol }) => {
+  const hasPersonal = formData.height || formData.weight || formData.complexion || formData.bloodGroup || formData.religion || formData.caste || formData.motherTongue || formData.gotra || formData.subCaste || formData.placeOfBirth || formData.dateOfBirth || formData.age;
+  const hasCareer = formData.education || formData.college || formData.occupation || formData.company || formData.totalEXP || formData.workLocation;
+  const hasFamily = formData.fatherName || formData.motherName || formData.brothers || formData.sisters || formData.familyType;
+  const hasContact = formData.contactNumber || formData.email || formData.address;
+
+  const ElegantRow = ({ label, value }) => {
+    if (!value) return null;
+    return (
+      <div style={{ display: 'flex', padding: '3.5px 0', borderBottom: `0.5px solid ${theme.borderInner}` }}>
+        <span style={{ fontSize: '10.5px', color: theme.label, width: '130px', flexShrink: 0 }}>{label}</span>
+        <span style={{ fontSize: '10.5px', fontWeight: 600, color: theme.value, flex: 1 }}>{value}</span>
+      </div>
+    );
+  };
+
+  return (
+    <div id="biodata-page1" style={{ width: '595px', height: '842px', backgroundColor: theme.bg, fontFamily: 'var(--font-jakarta), "Segoe UI", sans-serif', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      {/* Decorative top band */}
+      <div style={{ height: '8px', background: `linear-gradient(to right, ${theme.corner}, ${theme.accent}, ${theme.corner})` }} />
+
+      {/* Header area */}
+      <div style={{ textAlign: 'center', padding: '20px 24px 16px', borderBottom: `1px solid ${theme.borderInner}` }}>
+        <p style={{ fontSize: '11px', color: theme.accent, fontFamily: 'Georgia, serif', letterSpacing: '0.08em', marginBottom: '6px' }}>
+          || &#2358;&#2381;&#2352;&#2368; &#2327;&#2339;&#2375;&#2358;&#2366;&#2351; &#2344;&#2350;&#2307; ||
+        </p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', margin: '4px 0' }}>
+          <div style={{ width: '40px', height: '1px', background: `linear-gradient(to right, transparent, ${theme.accent})` }} />
+          {dividerSymbol && <span style={{ color: theme.accent, fontSize: '14px' }}>{dividerSymbol}</span>}
+          <div style={{ width: '40px', height: '1px', background: `linear-gradient(to left, transparent, ${theme.accent})` }} />
+        </div>
+        <h1 style={{ fontSize: '28px', fontWeight: 700, color: theme.name, margin: '6px 0 0', fontFamily: 'var(--font-cormorant), Georgia, serif', letterSpacing: '0.03em' }}>
+          {formData.fullName || 'Your Full Name'}
+        </h1>
+        {formData.aboutMe && (
+          <p style={{ fontSize: '10px', color: theme.subtext, marginTop: '8px', lineHeight: 1.7, maxWidth: '400px', margin: '8px auto 0', fontStyle: 'italic' }}>{formData.aboutMe}</p>
+        )}
+      </div>
+
+      {/* Content */}
+      <div style={{ flex: 1, padding: '16px 32px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        {/* Single column elegant layout */}
+        {hasPersonal && (
+          <div>
+            <div style={{ textAlign: 'center', margin: '4px 0 8px' }}>
+              <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: theme.heading, background: theme.bg, padding: '0 12px', position: 'relative' }}>Personal Details</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 24px' }}>
+              <div>
+                <ElegantRow label="Date of Birth" value={formData.dateOfBirth} />
+                <ElegantRow label="Place of Birth" value={formData.placeOfBirth} />
+                <ElegantRow label="Age" value={formData.age ? `${formData.age} years` : ''} />
+                <ElegantRow label="Gender" value={formData.gender} />
+                <ElegantRow label="Height" value={formData.height} />
+                <ElegantRow label="Weight" value={formData.weight ? `${formData.weight} kg` : ''} />
+                <ElegantRow label="Complexion" value={formData.complexion} />
+              </div>
+              <div>
+                <ElegantRow label="Blood Group" value={formData.bloodGroup} />
+                <ElegantRow label="Marital Status" value={formData.maritalStatus} />
+                <ElegantRow label="Religion" value={formData.religion} />
+                <ElegantRow label="Caste" value={formData.caste} />
+                <ElegantRow label="Sub-Caste" value={formData.subCaste} />
+                <ElegantRow label="Gotra" value={formData.gotra} />
+                <ElegantRow label="Mother Tongue" value={formData.motherTongue} />
+              </div>
+            </div>
+            {(() => {
+              const fields = ((formData.customFields || {}).personal || []).filter(f => f.label && f.value);
+              if (fields.length === 0) return null;
+              const mid = Math.ceil(fields.length / 2);
+              return (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 24px' }}>
+                  <div>{fields.slice(0, mid).map((f, i) => <ElegantRow key={`cp${i}`} label={f.label} value={f.value} />)}</div>
+                  <div>{fields.slice(mid).map((f, i) => <ElegantRow key={`cp2${i}`} label={f.label} value={f.value} />)}</div>
+                </div>
+              );
+            })()}
+          </div>
+        )}
+
+        {hasCareer && (
+          <div>
+            <div style={{ textAlign: 'center', margin: '6px 0 8px' }}>
+              <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: theme.heading }}>Education & Career</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 24px' }}>
+              <div>
+                <ElegantRow label="Education" value={formData.education} />
+                <ElegantRow label="College" value={formData.college} />
+                <ElegantRow label="Occupation" value={formData.occupation} />
+              </div>
+              <div>
+                <ElegantRow label="Company" value={formData.company} />
+                <ElegantRow label="Work Location" value={formData.workLocation} />
+                <ElegantRow label="Experience" value={formData.totalEXP} />
+              </div>
+            </div>
+            {(() => {
+              const fields = ((formData.customFields || {}).career || []).filter(f => f.label && f.value);
+              if (fields.length === 0) return null;
+              const mid = Math.ceil(fields.length / 2);
+              return (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 24px' }}>
+                  <div>{fields.slice(0, mid).map((f, i) => <ElegantRow key={`cc${i}`} label={f.label} value={f.value} />)}</div>
+                  <div>{fields.slice(mid).map((f, i) => <ElegantRow key={`cc2${i}`} label={f.label} value={f.value} />)}</div>
+                </div>
+              );
+            })()}
+          </div>
+        )}
+
+        {hasFamily && (
+          <div>
+            <div style={{ textAlign: 'center', margin: '6px 0 8px' }}>
+              <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: theme.heading }}>Family Details</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 24px' }}>
+              <div>
+                <ElegantRow label="Father's Name" value={formData.fatherName} />
+                <ElegantRow label="Father's Occupation" value={formData.fatherOccupation} />
+                <ElegantRow label="Mother's Name" value={formData.motherName} />
+              </div>
+              <div>
+                <ElegantRow label="Mother's Occupation" value={formData.motherOccupation} />
+                <ElegantRow label="Brothers" value={formData.brothers} />
+                <ElegantRow label="Sisters" value={formData.sisters} />
+              </div>
+            </div>
+            <ElegantRow label="Family Type" value={formData.familyType} />
+            {(() => {
+              const fields = ((formData.customFields || {}).family || []).filter(f => f.label && f.value);
+              if (fields.length === 0) return null;
+              const mid = Math.ceil(fields.length / 2);
+              return (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 24px' }}>
+                  <div>{fields.slice(0, mid).map((f, i) => <ElegantRow key={`cf${i}`} label={f.label} value={f.value} />)}</div>
+                  <div>{fields.slice(mid).map((f, i) => <ElegantRow key={`cf2${i}`} label={f.label} value={f.value} />)}</div>
+                </div>
+              );
+            })()}
+          </div>
+        )}
+
+        {hasContact && (
+          <div>
+            <div style={{ textAlign: 'center', margin: '6px 0 8px' }}>
+              <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: theme.heading }}>Contact Information</span>
+            </div>
+            <ElegantRow label="Contact No." value={formData.contactNumber} />
+            <ElegantRow label="Email" value={formData.email} />
+            <ElegantRow label="Address" value={formData.address} />
+            {((formData.customFields || {}).contact || []).filter(f => f.label && f.value).map((f, i) => (
+              <ElegantRow key={i} label={f.label} value={f.value} />
+            ))}
+          </div>
+        )}
+
+        {formData.hobbies && (
+          <div style={{ textAlign: 'center', marginTop: '4px' }}>
+            <span style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.25em', textTransform: 'uppercase', color: theme.heading }}>Interests</span>
+            <p style={{ fontSize: '10px', color: theme.value, marginTop: '4px' }}>{formData.hobbies.split(',').map(h => h.trim()).filter(Boolean).join('  ·  ')}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Bottom band */}
+      <div style={{ height: '4px', background: `linear-gradient(to right, ${theme.corner}, ${theme.accent}, ${theme.corner})` }} />
+    </div>
+  );
+};
+
+// ============================================================
+// TEMPLATE REGISTRY
+// ============================================================
+
+const TEMPLATE_OPTIONS = [
+  { id: 'classic', name: 'Classic', desc: 'Traditional ornamental borders' },
+  { id: 'elegant', name: 'Elegant', desc: 'Centered decorative' },
+];
+
+const TEMPLATE_COMPONENTS = {
+  classic: BiodataPage1,
+  elegant: BiodataPage1Elegant,
+};
+
+// ============================================================
 // MAIN PAGE COMPONENT
 // ============================================================
 
@@ -759,11 +949,13 @@ export default function BiodataApp() {
   const [autoSaved, setAutoSaved] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState('classic');
   const [selectedIcon, setSelectedIcon] = useState('flower');
+  const [selectedTemplate, setSelectedTemplate] = useState('classic');
   const fileInputRef = useRef(null);
   const previewScrollRef = useRef(null);
 
   const currentTheme = BIODATA_THEMES[selectedTheme];
   const currentDividerSymbol = DIVIDER_ICONS.find(i => i.id === selectedIcon)?.symbol || '';
+  const TemplateComponent = TEMPLATE_COMPONENTS[selectedTemplate] || BiodataPage1;
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -1229,6 +1421,23 @@ export default function BiodataApp() {
                 </Badge>
               </div>
 
+              {/* Template Selector */}
+              <div className="mb-3 flex flex-col items-center gap-1.5">
+                <span className="text-xs font-medium text-muted-foreground">Choose Template</span>
+                <div className="flex gap-1.5">
+                  {TEMPLATE_OPTIONS.map((t) => (
+                    <button
+                      key={t.id}
+                      onClick={() => setSelectedTemplate(t.id)}
+                      title={t.desc}
+                      className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${selectedTemplate === t.id ? 'bg-purple-600 text-white shadow-md scale-105' : 'bg-white border border-gray-200 text-gray-600 hover:border-purple-300 hover:text-purple-700'}`}
+                    >
+                      {t.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Theme Selector */}
               <div className="mb-3 flex flex-col items-center gap-1.5">
                 <span className="text-xs font-medium text-muted-foreground">Choose Theme</span>
@@ -1271,7 +1480,7 @@ export default function BiodataApp() {
                   <div>
                     <p className="text-[10px] text-muted-foreground mb-1 font-medium">Page 1 — Information</p>
                     <ScaledPreview>
-                      <BiodataPage1 formData={formData} theme={currentTheme} dividerSymbol={currentDividerSymbol} />
+                      <TemplateComponent formData={formData} theme={currentTheme} dividerSymbol={currentDividerSymbol} />
                     </ScaledPreview>
                   </div>
 

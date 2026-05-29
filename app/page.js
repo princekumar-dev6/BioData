@@ -67,7 +67,7 @@ export default function Home() {
             {/* Formats links */}
             <div className="md:col-span-2">
               <h2 className="text-lg font-bold mb-4 text-gray-900">Biodata Formats</h2>
-              <nav className="flex flex-col gap-2">
+              <nav className="grid grid-cols-2 gap-x-4 gap-y-2 md:flex md:flex-col md:gap-2">
                 {[
                   { href: '/marriage-biodata-format', label: 'Marriage Biodata Format' },
                   { href: '/hindu-biodata-format', label: 'Hindu Biodata Format' },
@@ -91,7 +91,7 @@ export default function Home() {
             {/* FAQ */}
             <div className="md:col-span-3">
               <h2 className="text-lg font-bold mb-4 text-gray-900">FAQ</h2>
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {[
                   { q: 'Is it really free?', a: 'Yes — no hidden charges, no watermarks, no signup. Create unlimited biodata downloads.' },
                   { q: 'Can I download as PDF?', a: 'Yes, instantly download a high-quality PDF with your info page and photo gallery.' },
@@ -99,7 +99,7 @@ export default function Home() {
                   { q: 'What details can I include?', a: 'Personal info, education, career, family details, contact, hobbies, and up to 4 photos.' },
                   { q: 'Works for all communities?', a: 'Yes — Hindu, Muslim, Christian, Sikh, Jain, Buddhist. Includes religion, caste, gotra fields.' },
                 ].map((faq) => (
-                  <details key={faq.q} className="group">
+                  <details key={faq.q} className="group border border-gray-100 rounded-lg px-3 py-2 md:border-0 md:rounded-none md:px-0 md:py-0">
                     <summary className="text-sm font-medium cursor-pointer hover:text-purple-700 transition-colors list-none flex items-center gap-2">
                       <span className="text-purple-400 text-xs group-open:rotate-90 transition-transform">▶</span>
                       {faq.q}
