@@ -760,6 +760,7 @@ export default function BiodataApp() {
   const [selectedTheme, setSelectedTheme] = useState('classic');
   const [selectedIcon, setSelectedIcon] = useState('flower');
   const fileInputRef = useRef(null);
+  const previewScrollRef = useRef(null);
 
   const currentTheme = BIODATA_THEMES[selectedTheme];
   const currentDividerSymbol = DIVIDER_ICONS.find(i => i.id === selectedIcon)?.symbol || '';
@@ -821,6 +822,12 @@ export default function BiodataApp() {
         photos: [...(prev.photos || []), fullImage],
       }));
       toast.success('Photo added!');
+      // Auto-scroll preview to show the photos page
+      setTimeout(() => {
+        if (previewScrollRef.current) {
+          previewScrollRef.current.scrollTo({ top: previewScrollRef.current.scrollHeight, behavior: 'smooth' });
+        }
+      }, 100);
     } catch (err) {
       toast.error('Failed to process image');
     }
@@ -1256,6 +1263,7 @@ export default function BiodataApp() {
               </div>
               <div className="rounded-xl p-2 sm:p-4 border border-border/40 bg-slate-50/80">
                 <div
+                  ref={previewScrollRef}
                   className="overflow-auto rounded-lg shadow-lg space-y-4"
                   style={{ maxHeight: 'calc(100vh - 150px)' }}
                 >
@@ -1305,65 +1313,21 @@ export default function BiodataApp() {
         </div>
       </main>
 
-      {/* SEO Footer */}
-      <footer className="border-t mt-12 py-10 px-4 bg-white/60">
-        <div className="max-w-5xl mx-auto">
-          {/* Main SEO content */}
-          <div className="text-center mb-8">
-            <h2 className="text-xl font-bold font-playfair mb-3 gradient-text">Free Shaadi Biodata Maker Online</h2>
-            <p className="text-sm text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Create beautiful bio data for marriage in minutes. FreeShaadiBiodata is the best free online biodata maker 
-              with modern templates, photo upload, live preview, and instant PDF download. Perfect for Hindu, 
-              Marathi, and all Indian marriage biodata formats. No signup or registration required — your data stays private in your browser.
-            </p>
-          </div>
-
-          {/* Internal links grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-8 max-w-3xl mx-auto">
-            {[
-              { href: '/marriage-biodata-format', label: 'Marriage Biodata Format' },
-              { href: '/hindu-biodata-format', label: 'Hindu Biodata Format' },
-              { href: '/biodata-for-boy', label: 'Biodata for Boy' },
-              { href: '/biodata-for-girl', label: 'Biodata for Girl' },
-              { href: '/simple-biodata-format', label: 'Simple Biodata Format' },
-              { href: '/modern-biodata-design', label: 'Modern Biodata Design' },
-              { href: '/marathi-biodata-format', label: 'Marathi Biodata Format' },
-            ].map((link) => (
-              <a key={link.href} href={link.href} className="text-xs text-muted-foreground hover:underline hover:text-foreground py-1">
-                {link.label}
-              </a>
-            ))}
-          </div>
-
-          {/* Keyword badges */}
-          <div className="flex flex-wrap justify-center gap-2 mb-6">
-            {[
-              'Free Biodata Maker', 'Marriage Biodata PDF', 'Biodata for Marriage',
-              'Online Biodata Maker', 'Indian Marriage Biodata', 'Shaadi Biodata',
-              'Matrimonial Biodata', 'Biodata Download Free',
-            ].map((tag) => (
-              <Badge key={tag} variant="secondary" className="text-xs bg-white/80 text-muted-foreground">
-                {tag}
-              </Badge>
-            ))}
-          </div>
-
-          {/* Feedback CTA */}
-          <div className="text-center mb-6">
-            <a
-              href="https://forms.gle/FqdEvsViAW3dT5nT6"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-full hover:bg-purple-100 transition-colors"
-            >
-              <Edit3 size={14} />
-              Feedback & Issue Report
-            </a>
-          </div>
-
+      {/* Footer */}
+      <footer className="border-t mt-8 py-6 px-4 bg-white/60">
+        <div className="max-w-5xl mx-auto flex flex-col items-center gap-3">
+          <a
+            href="https://forms.gle/FqdEvsViAW3dT5nT6"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-700 bg-purple-50 border border-purple-200 rounded-full hover:bg-purple-100 transition-colors"
+          >
+            <Edit3 size={14} />
+            Feedback & Issue Report
+          </a>
           <p className="text-xs text-muted-foreground text-center">
             Made with &#10084; | FreeShaadiBiodata &copy; {new Date().getFullYear()} | Free Shaadi Biodata Maker Online
-            <br />
+            {' · '}
             <a href="/privacy-policy" className="hover:underline">Privacy Policy</a>
           </p>
         </div>

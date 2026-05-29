@@ -4,127 +4,113 @@ import Link from 'next/link';
 export default function Home() {
   return (
     <>
-      {/* Server-rendered h1 for SEO — visually integrated as page hero above the app */}
-      <section className="gradient-bg pt-6 pb-2 px-4 text-center">
-        <h1 className="text-2xl md:text-3xl font-bold font-playfair gradient-text mb-2">
-          Free Shaadi Biodata Maker Online
-        </h1>
-        <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-          Create beautiful marriage biodata with modern templates, photo upload, live preview &amp; instant PDF download. 100% free, no signup required.
-        </p>
-      </section>
-
       <BiodataApp />
 
-      {/* Server-rendered SEO content visible to search engines */}
-      <section className="max-w-5xl mx-auto px-4 py-12 space-y-10">
-        {/* How it works */}
-        <div>
-          <h2 className="text-2xl font-bold text-center mb-6">How to Create Your Marriage Biodata</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="text-center p-4">
-              <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center text-white font-bold gradient-primary">1</div>
-              <h3 className="font-semibold mb-1">Fill Your Details</h3>
-              <p className="text-sm text-muted-foreground">Enter personal, education, career, and family information in our easy-to-use form.</p>
-            </div>
-            <div className="text-center p-4">
-              <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center text-white font-bold gradient-primary">2</div>
-              <h3 className="font-semibold mb-1">Preview in Real-Time</h3>
-              <p className="text-sm text-muted-foreground">See your biodata update live as you type. Choose from 6 beautiful themes and upload photos.</p>
-            </div>
-            <div className="text-center p-4">
-              <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center text-white font-bold gradient-primary">3</div>
-              <h3 className="font-semibold mb-1">Download PDF Free</h3>
-              <p className="text-sm text-muted-foreground">Click download to get a high-quality PDF biodata — no watermark, no signup required.</p>
+      {/* Server-rendered h1 for SEO — visually hidden but crawlable by search engines */}
+      <h1 className="sr-only">Free Shaadi Biodata Maker Online — Create & Download PDF Biodata for Marriage</h1>
+
+      {/* Server-rendered SEO content */}
+      <section className="border-t bg-gradient-to-b from-white to-purple-50/30">
+        <div className="max-w-5xl mx-auto px-4 py-14 space-y-14">
+
+          {/* How it works */}
+          <div>
+            <h2 className="text-xl font-bold text-center mb-8 text-gray-900">How It Works</h2>
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                { step: '1', title: 'Fill Details', desc: 'Enter personal, education, career & family info in our easy form.' },
+                { step: '2', title: 'Live Preview', desc: 'See your biodata update instantly. Pick from 6 themes & add photos.' },
+                { step: '3', title: 'Download PDF', desc: 'Get a print-ready PDF — no watermark, no signup, completely free.' },
+              ].map((item) => (
+                <div key={item.step} className="flex flex-col items-center text-center gap-2">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold gradient-primary shadow-md">{item.step}</div>
+                  <h3 className="font-semibold text-sm">{item.title}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
 
-        {/* Features */}
-        <div>
-          <h2 className="text-2xl font-bold text-center mb-6">Why Choose FreeShaadiBiodata?</h2>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {[
-              { title: '100% Free Forever', desc: 'No hidden charges, no premium plans. Create unlimited biodata downloads for free.' },
-              { title: 'No Signup Required', desc: 'Start creating immediately. No email, no phone number, no registration needed.' },
-              { title: 'Privacy First', desc: 'Your data never leaves your browser. We don\'t store any personal information on servers.' },
-              { title: 'Modern Templates', desc: '6 beautiful themes — Classic Gold, Royal Navy, Rose Elegance, Midnight Purple, Emerald Charm, and Sunset Warm.' },
-              { title: 'Photo Gallery', desc: 'Upload up to 4 photos that appear on a separate gallery page in your PDF.' },
-              { title: 'Instant PDF Download', desc: 'Generate and download a professional PDF biodata in seconds. Print-ready quality.' },
-            ].map((feature) => (
-              <div key={feature.title} className="border rounded-lg p-4 bg-white/60">
-                <h3 className="font-semibold mb-1 text-sm">{feature.title}</h3>
-                <p className="text-xs text-muted-foreground">{feature.desc}</p>
+          {/* Features + Description combined */}
+          <div className="grid md:grid-cols-2 gap-8 items-start">
+            <div>
+              <h2 className="text-xl font-bold mb-4 text-gray-900">Why FreeShaadiBiodata?</h2>
+              <div className="space-y-3">
+                {[
+                  { icon: '✓', text: '100% free forever — no hidden charges or premium plans' },
+                  { icon: '✓', text: 'No signup required — start creating instantly' },
+                  { icon: '✓', text: 'Privacy first — data never leaves your browser' },
+                  { icon: '✓', text: '6 beautiful modern themes to choose from' },
+                  { icon: '✓', text: 'Upload up to 4 photos with gallery page' },
+                  { icon: '✓', text: 'Instant high-quality PDF download' },
+                ].map((item) => (
+                  <div key={item.text} className="flex items-start gap-2">
+                    <span className="text-purple-600 font-bold text-xs mt-0.5">{item.icon}</span>
+                    <p className="text-sm text-muted-foreground">{item.text}</p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* SEO description block */}
-        <div className="text-center max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold mb-4">Best Free Online Biodata Maker for Indian Marriage</h2>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            FreeShaadiBiodata is India&apos;s most trusted free online biodata maker for marriage. Whether you need a Hindu biodata format,
-            Marathi biodata, biodata for boy, biodata for girl, or a simple modern biodata design — our tool creates professional
-            matrimonial biodata PDFs in minutes. The biodata includes all essential sections: personal details, education &amp; career,
-            family information, contact details, and a photo gallery page. Perfect for sharing with prospective families, matrimonial
-            sites, and matchmakers. Your data is never stored on any server — everything stays private in your browser.
-          </p>
-        </div>
-
-        {/* Biodata formats section with internal links */}
-        <div>
-          <h2 className="text-2xl font-bold text-center mb-6">Popular Biodata Formats</h2>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {[
-              { href: '/marriage-biodata-format', label: 'Marriage Biodata Format' },
-              { href: '/hindu-biodata-format', label: 'Hindu Biodata Format' },
-              { href: '/biodata-for-boy', label: 'Biodata for Boy' },
-              { href: '/biodata-for-girl', label: 'Biodata for Girl' },
-              { href: '/simple-biodata-format', label: 'Simple Biodata Format' },
-              { href: '/modern-biodata-design', label: 'Modern Biodata Design' },
-              { href: '/marathi-biodata-format', label: 'Marathi Biodata Format' },
-            ].map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="block p-3 rounded-lg border bg-white/60 hover:bg-purple-50 hover:border-purple-200 transition-colors text-sm font-medium text-center"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* FAQ section for rich snippets */}
-        <div>
-          <h2 className="text-2xl font-bold text-center mb-6">Frequently Asked Questions</h2>
-          <div className="space-y-4 max-w-3xl mx-auto">
-            <div className="border rounded-lg p-4 bg-white/60">
-              <h3 className="font-semibold mb-1">Is FreeShaadiBiodata really free?</h3>
-              <p className="text-sm text-muted-foreground">Yes, FreeShaadiBiodata is 100% free. No hidden charges, no watermarks on your PDF, and no signup or registration required. Create unlimited biodata downloads.</p>
             </div>
-            <div className="border rounded-lg p-4 bg-white/60">
-              <h3 className="font-semibold mb-1">Can I download my biodata as PDF?</h3>
-              <p className="text-sm text-muted-foreground">Yes, you can download your completed biodata as a high-quality PDF file instantly. The PDF includes your information page and photo gallery page.</p>
-            </div>
-            <div className="border rounded-lg p-4 bg-white/60">
-              <h3 className="font-semibold mb-1">Is my personal data safe?</h3>
-              <p className="text-sm text-muted-foreground">Absolutely. Your data never leaves your browser. We do not store any personal information on servers. Everything is processed locally on your device.</p>
-            </div>
-            <div className="border rounded-lg p-4 bg-white/60">
-              <h3 className="font-semibold mb-1">What details can I include in my marriage biodata?</h3>
-              <p className="text-sm text-muted-foreground">You can include personal details (name, age, height, complexion, religion, caste, gotra), education &amp; career information, family details (parents, siblings), contact information, about me section, hobbies, and up to 4 photos.</p>
-            </div>
-            <div className="border rounded-lg p-4 bg-white/60">
-              <h3 className="font-semibold mb-1">Does it work for all Indian communities?</h3>
-              <p className="text-sm text-muted-foreground">Yes, our biodata format works for all communities — Hindu, Muslim, Christian, Sikh, Jain, Buddhist. It includes fields for religion, caste, sub-caste, gotra, and mother tongue.</p>
-            </div>
-            <div className="border rounded-lg p-4 bg-white/60">
-              <h3 className="font-semibold mb-1">Can I use this on mobile?</h3>
-              <p className="text-sm text-muted-foreground">Yes, FreeShaadiBiodata works perfectly on mobile phones, tablets, and desktops. The responsive design adapts to any screen size.</p>
+            <div className="bg-white rounded-xl border p-5 shadow-sm">
+              <h2 className="text-lg font-bold mb-3 text-gray-900">Best Free Biodata Maker for Indian Marriage</h2>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                FreeShaadiBiodata is India&apos;s most trusted free online biodata maker. Whether you need a Hindu biodata,
+                Marathi biodata, biodata for boy or girl, or a modern design — create professional matrimonial
+                biodata PDFs in minutes. Includes personal details, education, career, family info, and photo gallery.
+                Perfect for sharing with families and matchmakers.
+              </p>
             </div>
           </div>
+
+          {/* Internal links + FAQ in two columns */}
+          <div className="grid md:grid-cols-5 gap-8">
+            {/* Formats links */}
+            <div className="md:col-span-2">
+              <h2 className="text-lg font-bold mb-4 text-gray-900">Biodata Formats</h2>
+              <nav className="flex flex-col gap-2">
+                {[
+                  { href: '/marriage-biodata-format', label: 'Marriage Biodata Format' },
+                  { href: '/hindu-biodata-format', label: 'Hindu Biodata Format' },
+                  { href: '/biodata-for-boy', label: 'Biodata for Boy' },
+                  { href: '/biodata-for-girl', label: 'Biodata for Girl' },
+                  { href: '/simple-biodata-format', label: 'Simple Biodata Format' },
+                  { href: '/modern-biodata-design', label: 'Modern Biodata Design' },
+                  { href: '/marathi-biodata-format', label: 'Marathi Biodata Format' },
+                ].map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="text-sm text-muted-foreground hover:text-purple-700 hover:underline transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+
+            {/* FAQ */}
+            <div className="md:col-span-3">
+              <h2 className="text-lg font-bold mb-4 text-gray-900">FAQ</h2>
+              <div className="space-y-3">
+                {[
+                  { q: 'Is it really free?', a: 'Yes — no hidden charges, no watermarks, no signup. Create unlimited biodata downloads.' },
+                  { q: 'Can I download as PDF?', a: 'Yes, instantly download a high-quality PDF with your info page and photo gallery.' },
+                  { q: 'Is my data safe?', a: 'Your data never leaves your browser. Nothing is stored on any server.' },
+                  { q: 'What details can I include?', a: 'Personal info, education, career, family details, contact, hobbies, and up to 4 photos.' },
+                  { q: 'Works for all communities?', a: 'Yes — Hindu, Muslim, Christian, Sikh, Jain, Buddhist. Includes religion, caste, gotra fields.' },
+                ].map((faq) => (
+                  <details key={faq.q} className="group">
+                    <summary className="text-sm font-medium cursor-pointer hover:text-purple-700 transition-colors list-none flex items-center gap-2">
+                      <span className="text-purple-400 text-xs group-open:rotate-90 transition-transform">▶</span>
+                      {faq.q}
+                    </summary>
+                    <p className="text-xs text-muted-foreground mt-1 ml-5 leading-relaxed">{faq.a}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
     </>
