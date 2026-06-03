@@ -1108,7 +1108,7 @@ export default function BiodataApp() {
     } catch (err) {
       console.error('PDF generation failed:', err);
       toast.dismiss();
-      toast.error('Failed to generate PDF. Please try again.');
+      toast.error('Failed to generate PDF. Please try again.', err);
     } finally {
       setIsGeneratingPDF(false);
     }
